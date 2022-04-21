@@ -29,6 +29,11 @@ export async function did() {
 }
 
 
+export function email() {
+  return "anonymous@0x.eth"
+}
+
+
 export async function encrypt(data: string) {
   const encryptionPublicKey = await publicKey()
 
@@ -109,6 +114,11 @@ export async function loadAccount(): Promise<string> {
   }
 
   return globCurrentAccount
+}
+
+
+export async function username() {
+  return "0x" + uint8arrays.toString(await publicKey(), "hex")
 }
 
 
