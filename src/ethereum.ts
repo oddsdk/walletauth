@@ -21,7 +21,17 @@ let globPublicKey: Uint8Array | null = null
 // ETHEREUM
 
 
-export async function did() {
+export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array> {
+  const ethereum = await load()
+  const account = await loadAccount()
+
+  return ethereum
+    .send("eth_decrypt", [ uint8arrays.toString(encryptedMessage, "utf8"), account ])
+    .then(resp => uint8arrays.fromString(resp, "utf8"))
+}
+
+
+export async function did(): Promise<string> {
   const pubKey = await publicKey()
   const prefix = [ 0xec, 0x01 ]
 
@@ -32,22 +42,26 @@ export async function did() {
 }
 
 
-export function email() {
+export function email(): string {
   return "anonymous@0x.eth"
 }
 
 
-export async function encrypt(data: string) {
+export async function encrypt(data: Uint8Array): Promise<Uint8Array> {
   const encryptionPublicKey = await publicKey()
 
+  // This gives us an object with the properties:
+  // ciphertext, ephemPublicKey, nonce, version
+  const encrypted = sigUtil.encrypt({
+    publicKey: uint8arrays.toString(encryptionPublicKey, "base64pad"),
+    data: uint8arrays.toString(data, "utf8"),
+    version: "x25519-xsalsa20-poly1305",
+  })
+
+  // The RPC method `eth_decrypt` needs an object with these exact props,
+  // hence the `JSON.stringify`.
   return uint8arrays.fromString(
-    JSON.stringify(
-      sigUtil.encrypt({
-        publicKey: uint8arrays.toString(encryptionPublicKey, "base64pad"),
-        data: data,
-        version: "x25519-xsalsa20-poly1305",
-      })
-    ),
+    JSON.stringify(encrypted),
     "utf8"
   )
 }
@@ -118,7 +132,7 @@ export async function publicKey(): Promise<Uint8Array> {
 }
 
 
-export async function username() {
+export async function username(): Promise<string> {
   return "0x" + uint8arrays.toString(await publicKey(), "hex")
 }
 
