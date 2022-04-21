@@ -1,10 +1,13 @@
-import type { EIP1193Provider, ProviderRpcError } from "eip1193-provider"
+import type { ProviderRpcError } from "eip1193-provider"
 
-import { BASE58_DID_PREFIX } from "webnative/did/util.js"
-import { isStringArray } from "./common"
 import * as guards from "@sniptt/guards"
 import * as sigUtil from "@metamask/eth-sig-util"
 import * as uint8arrays from "uint8arrays"
+import { BASE58_DID_PREFIX } from "webnative/did/util.js"
+import { Web3Provider } from "@ethersproject/providers"
+import { ethers } from "ethers"
+import { isStringArray } from "./common"
+import Web3Modal from "web3modal"
 
 
 // 🌸
@@ -50,6 +53,42 @@ export async function encrypt(data: string) {
 }
 
 
+export async function load(): Promise<Web3Provider> {
+  const web3Modal = new Web3Modal()
+  const instance = await web3Modal.connect()
+  const provider = new ethers.providers.Web3Provider(instance)
+
+  // events
+  provider.on("accountsChanged", handleAccountsChanged)
+
+  // fin
+  return provider
+}
+
+
+export async function loadAccount(): Promise<string> {
+  if (globCurrentAccount) return globCurrentAccount
+
+  const ethereum = await load()
+
+  await ethereum
+    .send("eth_accounts", [])
+    .then(handleAccountsChanged)
+    .catch((err: ProviderRpcError) => {
+      // Some unexpected error.
+      // For backwards compatibility reasons, if no accounts are available,
+      // eth_accounts will return an empty array.
+      console.error(err)
+    })
+
+  if (!globCurrentAccount) {
+    throw new Error("Failed to retrieve Ethereum account")
+  }
+
+  return globCurrentAccount
+}
+
+
 export async function publicKey(): Promise<Uint8Array> {
   if (globPublicKey) return globPublicKey
 
@@ -57,10 +96,10 @@ export async function publicKey(): Promise<Uint8Array> {
   const account = await loadAccount()
 
   const key: unknown = await ethereum
-    .request({
-      method: "eth_getEncryptionPublicKey",
-      params: [ account ]
-    })
+    .send(
+      "eth_getEncryptionPublicKey",
+      [ account ]
+    )
     .catch((error: ProviderRpcError) => {
       if (error.code === 4001) {
         // EIP-1193 userRejectedRequest error
@@ -76,44 +115,6 @@ export async function publicKey(): Promise<Uint8Array> {
 
   globPublicKey = uint8arrays.fromString(key, "base64pad")
   return globPublicKey
-}
-
-
-export function load(): Promise<EIP1193Provider> {
-  let eth
-
-  // deno-lint-ignore no-explicit-any
-  if ("ethereum" in window) eth = (window as any).ethereum
-  else throw new Error("Cannot load Ethereum/Metamask")
-
-  // events
-  eth.on("accountsChanged", handleAccountsChanged)
-
-  // fin
-  return eth
-}
-
-
-export async function loadAccount(): Promise<string> {
-  if (globCurrentAccount) return globCurrentAccount
-
-  const ethereum = await load()
-
-  await ethereum
-    .request({ method: "eth_accounts" })
-    .then(handleAccountsChanged)
-    .catch((err: ProviderRpcError) => {
-      // Some unexpected error.
-      // For backwards compatibility reasons, if no accounts are available,
-      // eth_accounts will return an empty array.
-      console.error(err)
-    })
-
-  if (!globCurrentAccount) {
-    throw new Error("Failed to retrieve Ethereum account")
-  }
-
-  return globCurrentAccount
 }
 
 
