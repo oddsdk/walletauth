@@ -27,6 +27,13 @@ export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array>
 
   return ethereum
     .send("eth_decrypt", [ uint8arrays.toString(encryptedMessage, "utf8"), account ])
+    .then(resp => {
+      try {
+        return JSON.parse(resp).data
+      } catch (e) {
+        return resp
+      }
+    })
     .then(resp => uint8arrays.fromString(resp, "utf8"))
 }
 
@@ -52,7 +59,7 @@ export async function encrypt(data: Uint8Array): Promise<Uint8Array> {
 
   // This gives us an object with the properties:
   // ciphertext, ephemPublicKey, nonce, version
-  const encrypted = sigUtil.encrypt({
+  const encrypted = sigUtil.encryptSafely({
     publicKey: uint8arrays.toString(encryptionPublicKey, "base64pad"),
     data: uint8arrays.toString(data, "utf8"),
     version: "x25519-xsalsa20-poly1305",
