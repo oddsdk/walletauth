@@ -3,7 +3,6 @@ import type { ProviderRpcError } from "eip1193-provider"
 import * as guards from "@sniptt/guards"
 import * as sigUtil from "@metamask/eth-sig-util"
 import * as uint8arrays from "uint8arrays"
-import { BASE58_DID_PREFIX } from "webnative/did/util.js"
 import { Web3Provider } from "@ethersproject/providers"
 import { ethers } from "ethers"
 import { isStringArray } from "./common"
@@ -14,16 +13,45 @@ import Web3Modal from "web3modal"
 
 
 let globCurrentAccount: string | null = null
-let globPublicKey: Uint8Array | null = null
+let globPublicEncryptionKey: Uint8Array | null = null
 
 
 
 // ETHEREUM
 
 
+export async function address() {
+  if (globCurrentAccount) return globCurrentAccount
+
+  const ethereum = await load()
+
+  await ethereum
+    .send("eth_accounts", [])
+    .then(handleAccountsChanged)
+    .catch((err: ProviderRpcError) => {
+      // Some unexpected error.
+      // For backwards compatibility reasons, if no accounts are available,
+      // eth_accounts will return an empty array.
+      console.error(err)
+    })
+
+  if (!globCurrentAccount) {
+    throw new Error("Failed to retrieve Ethereum account")
+  }
+
+  return globCurrentAccount
+}
+
+
+export async function chainId() {
+  const ethereum = await load()
+  return (await ethereum.getNetwork()).chainId
+}
+
+
 export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array> {
   const ethereum = await load()
-  const account = await loadAccount()
+  const account = await address()
 
   return ethereum
     .send("eth_decrypt", [ uint8arrays.toString(encryptedMessage, "utf8"), account ])
@@ -39,23 +67,19 @@ export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array>
 
 
 export async function did(): Promise<string> {
-  const pubKey = await publicKey()
-  const prefix = [ 0xec, 0x01 ]
-
-  const prefixedBytes = uint8arrays.concat([ prefix, pubKey ])
-
-  // Encode prefixed
-  return BASE58_DID_PREFIX + uint8arrays.toString(prefixedBytes, "base58btc")
+  const chain = await chainId()
+  return `did:ethr:${chain === 1 ? "" : "0x" + chain.toString(16) + ":"}${await address()}`
 }
 
 
-export function email(): string {
-  return "anonymous@0x.eth"
+export async function email(): Promise<string> {
+  const chain = await chainId()
+  return `${await address()}@0x${chain.toString(16)}.eth`
 }
 
 
 export async function encrypt(data: Uint8Array): Promise<Uint8Array> {
-  const encryptionPublicKey = await publicKey()
+  const encryptionPublicKey = await publicEncryptionKey()
 
   // This gives us an object with the properties:
   // ciphertext, ephemPublicKey, nonce, version
@@ -87,34 +111,11 @@ export async function load(): Promise<Web3Provider> {
 }
 
 
-export async function loadAccount(): Promise<string> {
-  if (globCurrentAccount) return globCurrentAccount
+export async function publicEncryptionKey(): Promise<Uint8Array> {
+  if (globPublicEncryptionKey) return globPublicEncryptionKey
 
   const ethereum = await load()
-
-  await ethereum
-    .send("eth_accounts", [])
-    .then(handleAccountsChanged)
-    .catch((err: ProviderRpcError) => {
-      // Some unexpected error.
-      // For backwards compatibility reasons, if no accounts are available,
-      // eth_accounts will return an empty array.
-      console.error(err)
-    })
-
-  if (!globCurrentAccount) {
-    throw new Error("Failed to retrieve Ethereum account")
-  }
-
-  return globCurrentAccount
-}
-
-
-export async function publicKey(): Promise<Uint8Array> {
-  if (globPublicKey) return globPublicKey
-
-  const ethereum = await load()
-  const account = await loadAccount()
+  const account = await address()
 
   const key: unknown = await ethereum
     .send(
@@ -134,13 +135,13 @@ export async function publicKey(): Promise<Uint8Array> {
     throw new Error("Expected ethereumPublicKey to be a string")
   }
 
-  globPublicKey = uint8arrays.fromString(key, "base64pad")
-  return globPublicKey
+  globPublicEncryptionKey = uint8arrays.fromString(key, "base64pad")
+  return globPublicEncryptionKey
 }
 
 
 export async function username(): Promise<string> {
-  return "0x" + uint8arrays.toString(await publicKey(), "hex")
+  return address()
 }
 
 
