@@ -20,7 +20,7 @@ let globPublicEncryptionKey: Uint8Array | null = null
 // ETHEREUM
 
 
-export async function address() {
+export async function address(): Promise<string> {
   if (globCurrentAccount) return globCurrentAccount
 
   const ethereum = await load()
@@ -43,9 +43,10 @@ export async function address() {
 }
 
 
-export async function chainId() {
+export async function chainId(): Promise<string> {
   const ethereum = await load()
-  return (await ethereum.getNetwork()).chainId
+  const id = (await ethereum.getNetwork()).chainId
+  return `eip155:${id}`
 }
 
 
@@ -67,8 +68,7 @@ export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array>
 
 
 export async function did(): Promise<string> {
-  const chain = await chainId()
-  return `did:ethr:${chain === 1 ? "" : "0x" + chain.toString(16) + ":"}${await address()}`
+  return `did:pkh:eip155:${await chainId()}:${await address()}`
 }
 
 
