@@ -1,5 +1,7 @@
 import * as guards from "@sniptt/guards"
 
+import * as uint8arrays from "uint8arrays"
+
 
 // 🛠
 

@@ -1,12 +1,24 @@
 import type { ProviderRpcError } from "eip1193-provider"
 
+import * as ethUtil from "ethereumjs-util"
 import * as guards from "@sniptt/guards"
+import * as secp from "@noble/secp256k1"
 import * as sigUtil from "@metamask/eth-sig-util"
 import * as uint8arrays from "uint8arrays"
+import { Buffer } from "buffer"
 import { Web3Provider } from "@ethersproject/providers"
 import { ethers } from "ethers"
-import { isStringArray } from "./common"
+import { keccak_256, sha3_256 } from "@noble/hashes/sha3"
 import Web3Modal from "web3modal"
+
+import { isStringArray } from "./common"
+
+
+// ⛰
+
+
+export const MSG_TO_SIGN = uint8arrays.fromString("Hello there, would you like to sign this so we can generate a DID?", "utf8")
+
 
 
 // 🌸
@@ -14,6 +26,7 @@ import Web3Modal from "web3modal"
 
 let globCurrentAccount: string | null = null
 let globPublicEncryptionKey: Uint8Array | null = null
+let globPublicSignatureKey: Uint8Array | null = null
 
 
 
@@ -43,10 +56,10 @@ export async function address(): Promise<string> {
 }
 
 
-export async function chainId(): Promise<string> {
+export async function chainId(): Promise<number> {
   const ethereum = await load()
   const id = (await ethereum.getNetwork()).chainId
-  return `eip155:${id}`
+  return id
 }
 
 
@@ -140,8 +153,81 @@ export async function publicEncryptionKey(): Promise<Uint8Array> {
 }
 
 
+export async function publicSignatureKey(): Promise<Uint8Array> {
+  if (globPublicSignatureKey) return globPublicSignatureKey
+
+  const signature = await sign(MSG_TO_SIGN)
+  const prefix = uint8arrays.fromString(
+    `\u0019Ethereum Signed Message:\n${MSG_TO_SIGN.length}`,
+    "utf8"
+  )
+
+  const { v } = ethUtil.fromRpcSig(
+    uint8ArrayToEthereumHex(signature)
+  )
+
+  globPublicSignatureKey = secp.recoverPublicKey(
+    sha3_256(
+      uint8arrays.concat([ prefix, MSG_TO_SIGN ])
+    ),
+    signature.subarray(0, 64),
+    v - 27 // Or, if chainId was used: v - ((await chainId() || 4) * 2 + 35)
+  )
+
+  return globPublicSignatureKey
+}
+
+
+export async function sign(data: Uint8Array): Promise<Uint8Array> {
+  const ethereum = await load()
+
+  return ethereum.send(
+    "personal_sign",
+    [
+      uint8arrays.toString(data, "hex"),
+      await address()
+    ]
+  ).then(
+    uint8ArrayFromEthereumHex
+  )
+}
+
+
 export async function username(): Promise<string> {
   return address()
+}
+
+
+
+// 🛠
+
+
+export function uint8ArrayFromEthereumHex(data: string): Uint8Array {
+  return uint8arrays.fromString(data.substr(2), "hex")
+}
+
+
+export function uint8ArrayToEthereumHex(data: Uint8Array): string {
+  return "0x" + uint8arrays.toString(data, "hex")
+}
+
+
+
+// 🔬
+
+
+export async function verifyPublicKey(): Promise<boolean> {
+  const signature = await sign(MSG_TO_SIGN)
+  const prefix = uint8arrays.fromString(
+    `\u0019Ethereum Signed Message:\n${MSG_TO_SIGN.length}`,
+    "utf8"
+  )
+
+  return secp.verify(
+    signature.subarray(0, 64),
+    sha3_256(uint8arrays.concat([ prefix, MSG_TO_SIGN ])),
+    await publicSignatureKey()
+  )
 }
 
 

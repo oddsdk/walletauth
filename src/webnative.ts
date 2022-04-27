@@ -28,6 +28,8 @@ const READ_KEY_PATH = wn.path.file(wn.path.Branch.Public, ".well-known", "read-k
 export async function login() {
   let dataRoot
 
+  return
+
   const username = await ethereum.username()
 
   // console.log(
@@ -123,14 +125,20 @@ export async function createFissionAccount(did: string) {
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      email: ethereum.email(),
-      username: ethereum.username()
+      email: await ethereum.email(),
+      username: await ethereum.username()
     })
   })
 
   return {
     success: response.status < 300
   }
+}
+
+
+export async function hasFissionAccount(username: string): Promise<boolean> {
+  const dataRoot = await wn.dataRoot.lookup(username)
+  return !!dataRoot
 }
 
 
@@ -158,6 +166,6 @@ export function encryptReadKey(readKey: string): Promise<Uint8Array> {
 
 
 function manageError(err: string) {
-  console.error(err)
   alert(`Error: ${err}`)
+  throw new Error(err)
 }

@@ -1,6 +1,6 @@
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill"
 import { defineConfig } from "vite"
-import { svelte } from "@sveltejs/vite-plugin-svelte"
+import elmPlugin from "vite-plugin-elm"
 
 
 export default defineConfig({
@@ -8,7 +8,7 @@ export default defineConfig({
     global: "globalThis",
   },
   plugins: [
-    svelte()
+    elmPlugin()
   ],
   optimizeDeps: {
     esbuildOptions: {
