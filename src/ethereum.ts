@@ -81,7 +81,10 @@ export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array>
 
 
 export async function did(): Promise<string> {
-  return `did:pkh:eip155:${await chainId()}:${await address()}`
+  const signatureKey = await publicSignatureKey()
+  const prefix = new Uint8Array([ 0xe7, 0x01 ])
+  const bytes = uint8arrays.concat([ prefix, signatureKey ])
+  return `did:key:z${uint8arrays.toString(bytes, "base58btc")}`
 }
 
 

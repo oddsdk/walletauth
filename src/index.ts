@@ -30,9 +30,9 @@ const app = Elm.Main.init({
 // })
 
 
-// ;(async () => {
-//   console.log(await ethereum.verifyPublicKey())
-// })()
+;(async () => {
+  console.log(await ethereum.did())
+})()
 
 
 export default app
