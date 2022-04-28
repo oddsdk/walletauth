@@ -1,19 +1,30 @@
 import type { ProviderRpcError } from "eip1193-provider"
 
-import * as ethUtil from "ethereumjs-util"
 import * as guards from "@sniptt/guards"
 import * as secp from "@noble/secp256k1"
 import * as sigUtil from "@metamask/eth-sig-util"
 import * as uint8arrays from "uint8arrays"
 import { Web3Provider } from "@ethersproject/providers"
 import { ethers } from "ethers"
-import { sha3_256 } from "@noble/hashes/sha3"
+import { keccak_256 } from "@noble/hashes/sha3"
 import Web3Modal from "web3modal"
 
 import { isStringArray } from "./common"
 
 
 // ⛰
+
+
+type Signature = {
+  r: Uint8Array
+  s: Uint8Array
+
+  recoveryParam: number
+  v: number
+
+  compact: Uint8Array
+  full: Uint8Array
+}
 
 
 export const MSG_TO_SIGN = uint8arrays.fromString("Hello there, would you like to sign this so we can generate a DID?", "utf8")
@@ -156,21 +167,12 @@ export async function publicSignatureKey(): Promise<Uint8Array> {
   if (globPublicSignatureKey) return globPublicSignatureKey
 
   const signature = await sign(MSG_TO_SIGN)
-  const prefix = uint8arrays.fromString(
-    `\u0019Ethereum Signed Message:\n${MSG_TO_SIGN.length}`,
-    "utf8"
-  )
-
-  const { v } = ethUtil.fromRpcSig(
-    uint8ArrayToEthereumHex(signature)
-  )
+  const signatureParts = deconstructSignature(signature)
 
   globPublicSignatureKey = secp.recoverPublicKey(
-    sha3_256(
-      uint8arrays.concat([ prefix, MSG_TO_SIGN ])
-    ),
-    signature.subarray(0, 64),
-    v - 27 // Or, if chainId was used: v - ((await chainId() || 4) * 2 + 35)
+    hashMessage(MSG_TO_SIGN),
+    signatureParts.full,
+    signatureParts.recoveryParam
   )
 
   return globPublicSignatureKey
@@ -201,8 +203,41 @@ export async function username(): Promise<string> {
 // 🛠
 
 
+export function deconstructSignature(signature: Uint8Array): Signature {
+  const parts = ethers.utils.splitSignature(signature)
+
+  const r = uint8ArrayFromEthereumHex(parts.r)
+  const s = uint8ArrayFromEthereumHex(parts.s)
+
+  return {
+    r, s,
+
+    recoveryParam: parts.recoveryParam,
+    v: parts.v,
+
+    compact: uint8ArrayFromEthereumHex(parts.compact),
+    full: uint8arrays.concat([ r, s ])
+  }
+}
+
+
+export function hashMessage(message: Uint8Array): Uint8Array {
+  return keccak_256(
+    uint8arrays.concat([ signedMessagePrefix(message), message ])
+  )
+}
+
+
+export function signedMessagePrefix(message: Uint8Array): Uint8Array {
+  return uint8arrays.fromString(
+    `\x19Ethereum Signed Message:\n${message.length}`,
+    "utf8"
+  )
+}
+
+
 export function uint8ArrayFromEthereumHex(data: string): Uint8Array {
-  return uint8arrays.fromString(data.substr(2), "hex")
+  return uint8arrays.fromString(data.substring(2), "hex")
 }
 
 
@@ -216,29 +251,23 @@ export function uint8ArrayToEthereumHex(data: Uint8Array): string {
 
 
 export async function verifyPublicKey(): Promise<boolean> {
-  const signature = await sign(MSG_TO_SIGN)
-
-  const prefix = uint8arrays.fromString(
-    `\u0019Ethereum Signed Message:\n${MSG_TO_SIGN.length}`,
-    "utf8"
-  )
-
-  return secp.verify(
-    signature.subarray(0, 64),
-    sha3_256(uint8arrays.concat([ prefix, MSG_TO_SIGN ])),
-    await publicSignatureKey()
-  )
+  return verifySignedMessage({
+    signature: await sign(MSG_TO_SIGN),
+    message: MSG_TO_SIGN,
+    publicKey: await publicSignatureKey()
+  })
 }
 
 
 export async function verifySignedMessage(
-  { signature, message }:
-  { signature: Uint8Array, message: Uint8Array }
+  { signature, message, publicKey }:
+  { signature: Uint8Array, message: Uint8Array, publicKey: Uint8Array }
 ): Promise<boolean> {
-  return ethers.utils.verifyMessage(
-    uint8arrays.toString(message, "utf8"),
-    uint8ArrayToEthereumHex(signature)
-  ).toLowerCase() === await address()
+  return secp.verify(
+    deconstructSignature(signature).full,
+    hashMessage(message),
+    publicKey
+  )
 }
 
 

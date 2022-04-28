@@ -204,6 +204,25 @@ export function encryptReadKey(readKey: string): Promise<Uint8Array> {
 }
 
 
+export async function verifyUcanSignature(ucan: Ucan): Promise<boolean> {
+  const message = uint8arrays.fromString(
+    `${wn.ucan.encodeHeader(ucan.header)}.${wn.ucan.encodePayload(ucan.payload)}`,
+    "utf8"
+  )
+
+  const signature = uint8arrays.fromString(
+    ucan.signature || "",
+    "base64url"
+  )
+
+  return ethereum.verifySignedMessage({
+    signature: signature,
+    message,
+    publicKey: await ethereum.publicSignatureKey()
+  })
+}
+
+
 
 // ㊙️
 
