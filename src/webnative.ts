@@ -7,6 +7,8 @@ import RootTree from "webnative/fs/root/tree"
 import { PublicFile } from "webnative/fs/v1/PublicFile"
 import { PublicTree } from "webnative/fs/v1/PublicTree"
 
+import { Resource, Ucan } from "webnative/ucan/types"
+
 import * as ethereum from "./ethereum.js"
 
 
@@ -28,19 +30,7 @@ const READ_KEY_PATH = wn.path.file(wn.path.Branch.Public, ".well-known", "read-k
 export async function login() {
   let dataRoot
 
-  return
-
   const username = await ethereum.username()
-
-  // console.log(
-  //   uint8arrays.toString(
-  //     await ethereum.decrypt(
-  //       await ethereum.encrypt(
-  //         uint8arrays.fromString("hello", "utf8")
-  //       )
-  //     )
-  //   )
-  // )
 
   // Create user if necessary
   console.log("Looking up data root")
@@ -56,7 +46,7 @@ export async function login() {
   let fs
 
   if (!dataRoot) {
-    // new user
+    // New user
     const readKey = await wn.crypto.aes.genKeyStr()
 
     console.log("Creating new WNFS")
@@ -78,7 +68,7 @@ export async function login() {
     await fs.mkdir(wn.path.directory("private", "Video"))
 
   } else {
-    // existing user
+    // Existing user
     const publicCid = decodeCID((await getSimpleLinks(dataRoot)).public.cid)
     const publicTree = await PublicTree.fromCID(publicCid)
     const unwrappedPath = wn.path.unwrap(READ_KEY_PATH)
@@ -110,10 +100,9 @@ export async function createFissionAccount(did: string) {
   const apiEndpoint = `${endpoints.api}/${endpoints.apiVersion}/api`
 
   // Create UCAN
-  const ucan = wn.ucan.encode(await wn.ucan.build({
+  const ucan = wn.ucan.encode(await createUcan({
     audience: FISSION_API_DID,
     issuer: did,
-    expiration: (Math.floor(Date.now() / 1000) + 30),
     lifetimeInSeconds: 30
   }))
 
@@ -144,6 +133,60 @@ export async function hasFissionAccount(username: string): Promise<boolean> {
 
 
 // 🛠
+
+
+export async function createUcan({
+  audience,
+  issuer,
+  lifetimeInSeconds,
+  potency,
+  proof,
+  resource
+}: {
+  audience: string
+  issuer: string
+  lifetimeInSeconds: number
+  potency?: string
+  proof?: string
+  resource?: Resource
+}): Promise<Ucan> {
+  const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+
+  const header = {
+    alg: "SECP256K1",
+    typ: "JWT",
+    uav: "1.0.0"
+  }
+
+  const payload = {
+    aud: audience,
+    exp: currentTimeInSeconds + lifetimeInSeconds,
+    fct: [],
+    iss: issuer,
+    nbf: currentTimeInSeconds - 60,
+    prf: proof || null,
+    ptc: potency,
+    rsc: resource || "*",
+  }
+
+  const encodedHeader = wn.ucan.encodeHeader(header)
+  const encodedPayload = wn.ucan.encodePayload(payload)
+  const signature = uint8arrays.toString(
+    await ethereum.sign(
+      uint8arrays.fromString(
+        `${encodedHeader}.${encodedPayload}`,
+        "utf8"
+      )
+    ),
+    "base64url"
+  )
+
+  return {
+    header,
+    payload,
+    signature
+  }
+}
 
 
 export async function decryptReadKey(encrypted: Uint8Array): Promise<string> {

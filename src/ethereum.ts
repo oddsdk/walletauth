@@ -5,10 +5,9 @@ import * as guards from "@sniptt/guards"
 import * as secp from "@noble/secp256k1"
 import * as sigUtil from "@metamask/eth-sig-util"
 import * as uint8arrays from "uint8arrays"
-import { Buffer } from "buffer"
 import { Web3Provider } from "@ethersproject/providers"
 import { ethers } from "ethers"
-import { keccak_256, sha3_256 } from "@noble/hashes/sha3"
+import { sha3_256 } from "@noble/hashes/sha3"
 import Web3Modal from "web3modal"
 
 import { isStringArray } from "./common"
@@ -218,6 +217,7 @@ export function uint8ArrayToEthereumHex(data: Uint8Array): string {
 
 export async function verifyPublicKey(): Promise<boolean> {
   const signature = await sign(MSG_TO_SIGN)
+
   const prefix = uint8arrays.fromString(
     `\u0019Ethereum Signed Message:\n${MSG_TO_SIGN.length}`,
     "utf8"
@@ -228,6 +228,17 @@ export async function verifyPublicKey(): Promise<boolean> {
     sha3_256(uint8arrays.concat([ prefix, MSG_TO_SIGN ])),
     await publicSignatureKey()
   )
+}
+
+
+export async function verifySignedMessage(
+  { signature, message }:
+  { signature: Uint8Array, message: Uint8Array }
+): Promise<boolean> {
+  return ethers.utils.verifyMessage(
+    uint8arrays.toString(message, "utf8"),
+    uint8ArrayToEthereumHex(signature)
+  ).toLowerCase() === await address()
 }
 
 

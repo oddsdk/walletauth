@@ -1,8 +1,11 @@
 import "./index.css"
 
+import * as uint8arrays from "uint8arrays"
+import * as wn from "webnative"
+
 import { Elm } from "./Application/Main.elm"
-import { hasFissionAccount } from "./webnative.ts"
 import * as ethereum from "./ethereum.ts"
+import * as webnative from "./webnative.ts"
 
 
 // 🚀
@@ -31,7 +34,30 @@ const app = Elm.Main.init({
 
 
 ;(async () => {
-  console.log(await ethereum.did())
+  const ucan = await webnative.createUcan({
+    audience: webnative.FISSION_API_DID,
+    issuer: await ethereum.did(),
+    lifetimeInSeconds: 30
+  })
+
+  const message = uint8arrays.fromString(
+    `${wn.ucan.encodeHeader(ucan.header)}.${wn.ucan.encodePayload(ucan.payload)}`,
+    "utf8"
+  )
+
+  const signature = uint8arrays.fromString(
+    ucan.signature,
+    "base64url"
+  )
+
+  const isValid = await ethereum.verifySignedMessage({
+    signature: signature,
+    message
+  })
+
+  console.log(
+    isValid
+  )
 })()
 
 
