@@ -153,7 +153,7 @@ export async function createUcan({
   const currentTimeInSeconds = Math.floor(Date.now() / 1000)
 
   const header = {
-    alg: "SECP256K1",
+    alg: "ES256K",
     typ: "JWT",
     uav: "1.0.0"
   }
@@ -165,7 +165,7 @@ export async function createUcan({
     iss: issuer,
     nbf: currentTimeInSeconds - 60,
     prf: proof || null,
-    ptc: potency,
+    ptc: potency || null,
     rsc: resource || "*",
   }
 
