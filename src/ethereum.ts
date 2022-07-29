@@ -28,6 +28,7 @@ type Signature = {
 
 
 export const MSG_TO_SIGN = uint8arrays.fromString("Hello there, would you like to sign this so we can generate a DID?", "utf8")
+export const SECP_PREFIX = new Uint8Array([ 0xe7, 0x01 ])
 
 
 
@@ -91,7 +92,11 @@ export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array>
 
 
 export async function did(): Promise<string> {
-  return `did:pkh:eip155:${await chainId()}:${await address()}`
+  const key = await publicSignatureKey()
+  const arr = uint8arrays.concat([ SECP_PREFIX, key ])
+  console.log(uint8arrays.toString(key, "base64pad"))
+
+  return `did:key:z${uint8arrays.toString(arr, "base58btc")}`
 }
 
 
