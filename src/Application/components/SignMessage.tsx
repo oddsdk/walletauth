@@ -24,8 +24,8 @@ const SignMessage = () => {
   };
 
   /**
-   * I'm leaving this here for now to preserve the existing behaviour for testing purposes
-   * This will function quite differently was we have all the different pieces working
+   * I'm leaving this here for now to preserve the existing behaviour for testing purposes.
+   * This will function quite differently once we have all the different pieces working
    */
   useMemo(() => {
     signUcanMessage();
