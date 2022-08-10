@@ -1,22 +1,23 @@
 import "./index.css"
 
-import * as uint8arrays from "uint8arrays"
-import * as wn from "webnative"
+// import * as uint8arrays from "uint8arrays"
+// import * as wn from "webnative"
 
-import * as ethereum from "./ethereum.ts"
-import * as webnative from "./webnative.ts"
-import { Elm } from "./Application/Main.elm"
+// import * as ethereum from "./ethereum.ts"
+// import * as webnative from "./webnative.ts"
+// import { Elm } from "./Elm/Main.elm"
+
+
+import "./Application/Main.tsx"
 
 
 // 🚀
 
 
-const app = Elm.Main.init({
-  node: document.getElementById("app"),
-  flags: {}
-})
-
-
+// const app = Elm.Main.init({
+//   node: document.getElementById("app"),
+//   flags: {}
+// })
 
 // PORTS
 
@@ -33,17 +34,17 @@ const app = Elm.Main.init({
 // })
 
 
-;(async () => {
-  const ucan = await webnative.createUcan({
-    audience: webnative.FISSION_API_DID,
-    issuer: await ethereum.did(),
-    lifetimeInSeconds: 30
-  })
+// ;(async () => {
+//   const ucan = await webnative.createUcan({
+//     audience: webnative.FISSION_API_DID,
+//     issuer: await ethereum.did(),
+//     lifetimeInSeconds: 30
+//   })
 
-  console.log(
-    await webnative.verifyUcanSignature(ucan)
-  )
-})()
+//   console.log(
+//     await webnative.verifyUcanSignature(ucan)
+//   )
+// })()
 
 
-export default app
+// export default app
