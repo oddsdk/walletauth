@@ -1,5 +1,3 @@
-import "./index.css"
-
 // import * as uint8arrays from "uint8arrays"
 // import * as wn from "webnative"
 
@@ -8,7 +6,13 @@ import "./index.css"
 // import { Elm } from "./Elm/Main.elm"
 
 
+import "./index.css"
 import "./Application/Main.tsx"
+
+/**
+ * Most of the code in this file is commented out now, but I'll keep it here until
+ * we make the final decision on our framework/approach
+ */
 
 
 // 🚀
