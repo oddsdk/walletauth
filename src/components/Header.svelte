@@ -18,14 +18,14 @@
     <Brand />
     <span class="text-xl ml-2">{appName}</span>
   </div>
-<!--
-  {#if !$sessionStore.loading && !$sessionStore.authed}
+
+  <!-- {#if !$sessionStore.loading && !$sessionStore.authed} -->
     <div class="flex-none">
-      <a class="btn btn-sm h-10 btn-primary normal-case" href="/connect">
+      <button class="btn btn-sm h-10 btn-primary normal-case">
         Connect
-      </a>
+      </button>
     </div>
-  {/if} -->
+  <!-- {/if} -->
 
   <span class="ml-2">
     {#if $theme === 'light'}
