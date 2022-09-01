@@ -1,19 +1,37 @@
+import { resolve } from 'path'
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill"
-import { defineConfig } from "vite"
-import reactPlugin from "@vitejs/plugin-react"
+import { sveltekit } from '@sveltejs/kit/vite';
 
-export default defineConfig({
-  define: {
-    global: "globalThis",
+/** @type {import('vite').UserConfig} */
+const config = {
+  build: {
+    target: 'es2020'
   },
-  plugins: [reactPlugin()],
+  define: {
+    global: 'globalThis'
+  },
+  plugins: [sveltekit()],
+  resolve: {
+    alias: {
+      $components: resolve('./src/components'),
+      $routes: resolve('./src/routes')
+    }
+  },
   optimizeDeps: {
+    include: ['ethers'],
+    // Node.js global to browser globalThis
+    define: {
+      global: 'globalThis'
+    },
+    // Enable esbuild polyfill plugins
     esbuildOptions: {
       plugins: [
         NodeGlobalsPolyfillPlugin({
-          buffer: true,
-        }),
-      ],
-    },
-  },
-});
+          buffer: true
+        })
+      ]
+    }
+  }
+}
+
+export default config;
