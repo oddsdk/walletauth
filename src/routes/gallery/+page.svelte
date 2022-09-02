@@ -2,7 +2,7 @@
   // import { onDestroy } from 'svelte'
   // import { goto } from '$app/navigation'
   // import { sessionStore } from '../../stores'
-  import { theme as themeStore } from '../../stores'
+  import { theme } from '../../stores'
   import { galleryStore } from './stores'
   import Dropzone from './components/upload/Dropzone.svelte'
   import ImageGallery from './components/imageGallery/ImageGallery.svelte'
@@ -32,7 +32,7 @@
   <!-- {#if $sessionStore.authed} -->
     <div class="flex mb-4">
       <div
-        class="tabs tabs-boxed w-fit border {$themeStore === 'light'
+        class="tabs tabs-boxed w-fit border {$theme === 'light'
           ? 'button-transparent'
           : 'border-primary'}"
       >
