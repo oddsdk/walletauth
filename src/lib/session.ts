@@ -61,6 +61,7 @@ export const initialise: () => Promise<void> = async () => {
   } catch (error) {
     console.error(error)
     sessionStore.update(state => ({ ...state, error: true, loading: false }))
+    addNotification(error.message, 'error')
   }
 }
 
