@@ -14,7 +14,7 @@
   onDestroy(unsubscribe)
 </script>
 
-<div class="grid grid-flow-row auto-rows-max gap-5 justify-items-center pb-5">
+<div class="grid grid-flow-row auto-rows-max gap-5 justify-items-center py-4">
   <h1 class="text-2xl">Welcome to {appName}!</h1>
 
   {#if session?.authed}
