@@ -5,7 +5,8 @@
   import { appDescription, appName, appURL } from '$lib/app-info'
   import { TABLET_WIDTH } from '$lib/device'
   import { initialise } from '$lib/session'
-  import { deviceStore, theme } from '../stores'
+  import { deviceStore, sessionStore, theme } from '../stores'
+  import FullScreenLoadingSpinner from '$components/common/FullScreenLoadingSpinner.svelte'
   import Notifications from '$components/notifications/Notifications.svelte'
   import Header from '$components/Header.svelte'
 
@@ -56,5 +57,9 @@
   <Header />
   <Notifications />
 
-  <slot />
+  {#if $sessionStore.loading}
+    <FullScreenLoadingSpinner />
+  {:else}
+    <slot />
+  {/if}
 </div>
