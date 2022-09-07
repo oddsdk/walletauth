@@ -17,6 +17,7 @@ export const deviceStore: Writable<Device> = writable({ isMobile: true })
 export const notificationStore: Writable<Notification[]> = writable([])
 
 export const sessionStore: Writable<Session> = writable({
+  address: null,
   authed: false,
   loading: false,
   error: false,

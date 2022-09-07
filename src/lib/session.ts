@@ -1,42 +1,59 @@
 import * as walletauth from 'webnative-walletauth'
-import { Scenario } from 'webnative'
-import { sessionStore } from '../stores'
+import { AppScenario } from 'webnative'
+import { filesystemStore, sessionStore } from '../stores'
 import { addNotification } from '$lib/notifications'
 
 export type Session = {
+  address: string
   authed: boolean
   loading: boolean
   error: boolean
 }
 
-// Initialise
+/**
+ * Ask the user to sign a message so we can use their wallet key to
+ * create/attach their file system
+ */
 export const initialise: () => Promise<void> = async () => {
   try {
-    // Notify the user if their MetaMask is locked
-    const isUnlocked = await window?.ethereum?._metamask.isUnlocked()
-    if (!isUnlocked) {
-      addNotification('Please unlock MetaMask to continue', 'error')
-      return
-    }
+    // Point to staging instance
+    walletauth.setup.debug({ enabled: true })
+    walletauth.setup.endpoints({
+      api: 'https://runfission.net',
+      lobby: 'https://auth.runfission.net',
+      user: 'fissionuser.net'
+    })
 
     sessionStore.update((state) => ({...state, loading: true}))
 
     const appState = await walletauth.app()
 
+    // Update FS store
+    filesystemStore.update(() => (appState as any).fs)
+
     switch (appState.scenario) {
-      case Scenario.AuthSucceeded:
+      case AppScenario.Authed:
         // ✅ Authenticated
-        sessionStore.update(state => ({ ...state, loading: false, authed: true }))
-        addNotification('Wallet connected. You can now access your Webnative File System.', 'success')
+        sessionStore.update(state => ({
+          ...state,
+          address: appState.username,
+          authed: true,
+          loading: false,
+        }))
+        addNotification(
+          'Wallet connected. You can now access your Webnative File System.',
+          'success'
+        )
         break
 
-      case Scenario.NotAuthorised:
+      case AppScenario.NotAuthed:
         // Failed to authenticate with wallet
         sessionStore.update(state => ({
           ...state,
-          loading: false,
+          address: null,
           authed: false,
           error: true,
+          loading: false,
         }))
         break
     }

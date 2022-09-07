@@ -30,8 +30,9 @@
   },
   "dependencies": {
     "buffer": "^6.0.3",
+    "events": "^3.3.0",
     "undici": "*",
-    "webnative-walletauth": "file:../webnative-walletauth",
-    "webnative": "^0.31.1"
+    "webnative": "^0.34.1",
+    "webnative-walletauth": "file:../webnative-walletauth"
   }
 }
