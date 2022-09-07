@@ -22,7 +22,7 @@ export const initialise: () => Promise<void> = async () => {
     walletauth.setup.endpoints({
       api: 'https://runfission.net',
       lobby: 'https://auth.runfission.net',
-      user: 'fissionuser.net'
+      user: 'fissionuser.net',
     })
 
     sessionStore.update((state) => ({...state, loading: true}))
