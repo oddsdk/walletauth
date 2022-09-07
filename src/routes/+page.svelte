@@ -3,7 +3,7 @@
 
   import { sessionStore } from '../stores'
   import { appName } from '$lib/app-info'
-  import type { Session } from '$lib/session'
+  import { copyAddressToClipboard, type Session } from '$lib/session'
 
   let session: Session
 
@@ -24,6 +24,7 @@
         <p>
           Your address is:
           <span
+            on:click={copyAddressToClipboard}
             class="inline-block px-2 mt-2 cursor-pointer font-mono bg-slate-300 dark:bg-slate-700 rounded-md overflow-hidden text-ellipsis w-[calc(100%-20px)]"
           >
             {session.address}

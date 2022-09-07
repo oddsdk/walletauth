@@ -1,3 +1,4 @@
+import { get as getStore } from 'svelte/store'
 import * as walletauth from 'webnative-walletauth'
 import { AppScenario } from 'webnative'
 import { filesystemStore, sessionStore } from '../stores'
@@ -12,7 +13,7 @@ export type Session = {
 
 /**
  * Ask the user to sign a message so we can use their wallet key to
- * create/attach their file system
+ * create/attach their webnative file system
  */
 export const initialise: () => Promise<void> = async () => {
   try {
@@ -60,5 +61,19 @@ export const initialise: () => Promise<void> = async () => {
   } catch (error) {
     console.error(error)
     sessionStore.update(state => ({ ...state, error: true, loading: false }))
+  }
+}
+
+/**
+ * Copy the user's address to the clipboard
+ */
+export const copyAddressToClipboard: () => Promise<void> = async () => {
+  try {
+    const session = getStore(sessionStore)
+    await navigator.clipboard.writeText(session.address)
+    addNotification('Address copied to clipboard', 'success')
+  } catch (error) {
+    console.error(error)
+    addNotification('Failed to copy address to clipboard', 'error')
   }
 }
