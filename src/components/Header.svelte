@@ -4,8 +4,9 @@
   import { storeTheme, type Theme } from '$lib/theme'
   import { appName } from '$lib/app-info'
   import Brand from '$components/icons/Brand.svelte'
-  import LightMode from '$components/icons/LightMode.svelte'
+  import Connect from '$components/auth/connect/Connect.svelte'
   import DarkMode from '$components/icons/DarkMode.svelte'
+  import LightMode from '$components/icons/LightMode.svelte'
 
   const setTheme = (newTheme: Theme) => {
     theme.set(newTheme)
@@ -19,13 +20,9 @@
     <span class="text-xl ml-2">{appName}</span>
   </div>
 
-  <!-- {#if !$sessionStore.loading && !$sessionStore.authed} -->
-    <div class="flex-none">
-      <button class="btn btn-sm h-10 btn-primary normal-case">
-        Connect
-      </button>
-    </div>
-  <!-- {/if} -->
+  <div class="flex-none">
+    <Connect />
+  </div>
 
   <span class="ml-2">
     {#if $theme === 'light'}

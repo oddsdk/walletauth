@@ -4,6 +4,7 @@
   import '../global.css'
   import { appDescription, appName, appURL } from '$lib/app-info'
   import { TABLET_WIDTH } from '$lib/device'
+  import { initialise } from '$lib/session'
   import { deviceStore, theme } from '../stores'
   import Notifications from '$components/notifications/Notifications.svelte'
   import Header from '$components/Header.svelte'
@@ -17,6 +18,8 @@
       deviceStore.set({ isMobile: false })
     }
   }
+
+  initialise()
 </script>
 
 <svelte:head>

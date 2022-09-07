@@ -1,5 +1,5 @@
 {
-  "name": "webnative-walletauth",
+  "name": "walletauth",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -29,16 +29,9 @@
     "vite": "^3.1.0-beta.1"
   },
   "dependencies": {
-    "@ethersproject/providers": "^5.6.4",
-    "@metamask/eth-sig-util": "^4.0.0",
-    "@noble/hashes": "^1.0.0",
-    "@noble/secp256k1": "^1.5.5",
-    "@sniptt/guards": "^0.2.0",
     "buffer": "^6.0.3",
-    "eip1193-provider": "^1.0.1",
-    "ethereumjs-util": "^7.1.4",
-    "ethers": "^5.6.4",
-    "uint8arrays": "^3.0.0",
+    "undici": "*",
+    "webnative-walletauth": "file:../webnative-walletauth",
     "webnative": "^0.31.1"
   }
 }

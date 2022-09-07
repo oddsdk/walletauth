@@ -18,7 +18,6 @@ const config = {
     }
   },
   optimizeDeps: {
-    include: ['ethers'],
     // Node.js global to browser globalThis
     define: {
       global: 'globalThis'
