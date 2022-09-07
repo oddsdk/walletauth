@@ -27,6 +27,7 @@ export const initialise: () => Promise<void> = async () => {
       case Scenario.AuthSucceeded:
         // ✅ Authenticated
         sessionStore.update(state => ({ ...state, loading: false, authed: true }))
+        addNotification('Wallet connected. You can now access your Webnative File System.', 'success')
         break
 
       case Scenario.NotAuthorised:
