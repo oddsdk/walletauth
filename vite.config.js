@@ -23,13 +23,13 @@ const config = {
     //   global: 'globalThis'
     // },
     // Enable esbuild polyfill plugins
-    esbuildOptions: {
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true
-        })
-      ]
-    }
+    // esbuildOptions: {
+    //   plugins: [
+    //     NodeGlobalsPolyfillPlugin({
+    //       buffer: true
+    //     })
+    //   ]
+    // }
   }
 }
 
