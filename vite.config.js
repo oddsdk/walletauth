@@ -7,9 +7,9 @@ const config = {
   build: {
     target: 'es2020'
   },
-  define: {
-    global: 'globalThis'
-  },
+  // define: {
+  //   global: 'window'
+  // },
   plugins: [sveltekit()],
   resolve: {
     alias: {
@@ -18,10 +18,10 @@ const config = {
     }
   },
   optimizeDeps: {
-    // Node.js global to browser globalThis
-    define: {
-      global: 'globalThis'
-    },
+    // // Node.js global to browser globalThis
+    // define: {
+    //   global: 'globalThis'
+    // },
     // Enable esbuild polyfill plugins
     esbuildOptions: {
       plugins: [

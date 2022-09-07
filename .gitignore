@@ -4,3 +4,5 @@ dist
 # svelte
 .svelte-kit/
 build/
+
+.DS_Store

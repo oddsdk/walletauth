@@ -22,9 +22,9 @@
       <div class="card-body">
         <h2 class="card-title">👋 Account</h2>
         <p>
-          Your address is
+          Your address is:
           <span
-            class="inline-block px-2 font-mono bg-slate-300 dark:bg-slate-700 rounded-md overflow-hidden text-ellipsis w-[calc(100%-30px)]"
+            class="inline-block px-2 mt-2 cursor-pointer font-mono bg-slate-300 dark:bg-slate-700 rounded-md overflow-hidden text-ellipsis w-[calc(100%-20px)]"
           >
             {session.address}
           </span>
