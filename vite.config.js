@@ -7,9 +7,6 @@ const config = {
   build: {
     target: 'es2020'
   },
-  define: {
-    global: 'globalThis'
-  },
   plugins: [sveltekit()],
   resolve: {
     alias: {
@@ -17,21 +14,6 @@ const config = {
       $routes: resolve('./src/routes')
     }
   },
-  optimizeDeps: {
-    include: ['ethers'],
-    // Node.js global to browser globalThis
-    define: {
-      global: 'globalThis'
-    },
-    // Enable esbuild polyfill plugins
-    esbuildOptions: {
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true
-        })
-      ]
-    }
-  }
 }
 
 export default config;

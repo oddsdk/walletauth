@@ -1,0 +1,62 @@
+Arguments: 
+  /Users/andrewvivash/.nvm/versions/node/v16.14.2/bin/node /usr/local/Cellar/yarn/1.22.18/libexec/bin/yarn.js
+
+PATH: 
+  /Users/andrewvivash/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/Users/andrewvivash/Library/pnpm:/usr/local/opt/postgresql@12/bin:/usr/local/pgsql/bin/:/Users/andrewvivash/Desktop/Projects/Commit/bin:/usr/local/go/bin:/Users/andrewvivash/.nvm/versions/node/v16.14.2/bin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Applications/Postgres.app/Contents/Versions/latest/bin:/Users/andrewvivash/.cargo/bin:/Users/andrewvivash/.nix-profile/bin:/usr/local/Cellar/rabbitmq/3.7.11/sbin/:/Users/andrewvivash/.foundry/bin
+
+Yarn version: 
+  1.22.18
+
+Node version: 
+  16.14.2
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: EEXIST: file already exists, mkdir '/Users/andrewvivash/Desktop/Projects/Fission/walletauth/node_modules/webnative-walletauth/node_modules'
+
+npm manifest: 
+  {
+    "name": "walletauth",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+      "dev": "vite dev",
+      "build": "tsc && vite build",
+      "preview": "vite preview",
+      "check": "svelte-check --tsconfig ./tsconfig.json",
+      "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+      "lint": "eslint './src/**/*.{js,ts,svelte}'",
+      "format": "prettier --write --plugin-search-dir=. ."
+    },
+    "devDependencies": {
+      "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+      "@sveltejs/adapter-static": "^1.0.0-next.39",
+      "@sveltejs/kit": "1.0.0-next.431",
+      "autoprefixer": "^10.4.4",
+      "daisyui": "^2.0.2",
+      "esbuild": "*",
+      "node-fetch": "*",
+      "postcss": "^8.4.12",
+      "svelte": "^3.44.0",
+      "svelte-check": "^2.7.1",
+      "svelte-preprocess": "^4.10.6",
+      "tailwindcss": "^3.0.24",
+      "typescript": "^4.5.4",
+      "vite": "^3.1.0-beta.1"
+    },
+    "dependencies": {
+      "buffer": "^6.0.3",
+      "undici": "*",
+      "webnative-walletauth": "file:../webnative-walletauth/",
+      "webnative": "^0.31.1"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
