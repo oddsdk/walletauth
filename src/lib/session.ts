@@ -18,6 +18,8 @@ export type Session = {
  */
 export const initialise: () => Promise<void> = async () => {
   try {
+    sessionStore.update(state => ({ ...state, loading: true }))
+
     // Point to staging instance
     walletauth.setup.debug({ enabled: true })
     walletauth.setup.endpoints({
@@ -26,43 +28,53 @@ export const initialise: () => Promise<void> = async () => {
       user: 'fissionuser.net',
     })
 
-    sessionStore.update((state) => ({...state, loading: true}))
+    // Get the initial WNFS appState
+    const initialAppState = await walletauth.app({
+      onAccountChange: newAppState => handleAppState(newAppState),
+    })
 
-    const appState = await walletauth.app()
-
-    // Update FS store
-    filesystemStore.update(() => (appState as any).fs)
-
-    switch (appState.scenario) {
-      case AppScenario.Authed:
-        // ✅ Authenticated
-        sessionStore.update(state => ({
-          ...state,
-          address: appState.username,
-          authed: true,
-          loading: false,
-        }))
-        addNotification(
-          'Wallet connected. You can now access your Webnative File System.',
-          'success'
-        )
-        break
-
-      case AppScenario.NotAuthed:
-        // Failed to authenticate with wallet
-        sessionStore.update(state => ({
-          ...state,
-          address: null,
-          authed: false,
-          error: true,
-          loading: false,
-        }))
-        break
-    }
+    // Populate session and filesystem stores
+    handleAppState(initialAppState)
   } catch (error) {
     console.error(error)
     sessionStore.update(state => ({ ...state, error: true, loading: false }))
     addNotification(error.message, 'error')
+  }
+}
+
+/**
+ * Handle updates to the WNFS appState by setting the session and filesystem stores
+ * @param appState
+ */
+const handleAppState = (appState) => {
+  // Update FS store
+  filesystemStore.update(() => (appState as any).fs)
+
+  switch (appState.scenario) {
+    case AppScenario.Authed:
+      // ✅ Authenticated
+      sessionStore.update(state => ({
+        ...state,
+        address: appState.username,
+        authed: true,
+        loading: false
+      }))
+      addNotification(
+        'Wallet connected. You can now access your Webnative File System.',
+        'success'
+      )
+      break
+
+    case AppScenario.NotAuthed:
+      // Failed to authenticate with wallet
+      sessionStore.update(state => ({
+        ...state,
+        address: null,
+        authed: false,
+        error: true,
+        loading: false
+      }))
+      break
   }
 }
 

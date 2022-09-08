@@ -113,7 +113,6 @@ export const uploadImageToWNFS: (
   try {
     const { selectedArea } = getStore(galleryStore)
     const fs = getStore(filesystemStore)
-    console.log('fs', fs)
 
     // Reject files over 5MB
     const imageSizeInMB = image.size / (1024 * 1024)
