@@ -1,6 +1,7 @@
 import { get as getStore } from 'svelte/store'
+import { goto } from '$app/navigation'
 import * as walletauth from 'webnative-walletauth'
-import { AppScenario } from 'webnative'
+import { AppScenario, leave } from 'webnative'
 import { filesystemStore, sessionStore } from '../stores'
 import { addNotification } from '$lib/notifications'
 
@@ -63,6 +64,23 @@ export const initialise: () => Promise<void> = async () => {
     sessionStore.update(state => ({ ...state, error: true, loading: false }))
     addNotification(error.message, 'error')
   }
+}
+
+/**
+ * Disconnect the user from their webnative session, reset the sessionStore and go to homepage
+ */
+export const disconnect: () => Promise<void> = async () => {
+  await leave({ withoutRedirect: true })
+
+  sessionStore.update(state => ({
+    ...state,
+    address: null,
+    authed: false,
+    loading: false,
+    error: false,
+  }))
+
+  goto('/')
 }
 
 /**

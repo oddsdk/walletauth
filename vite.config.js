@@ -1,5 +1,4 @@
 import { resolve } from 'path'
-import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill"
 import { sveltekit } from '@sveltejs/kit/vite';
 
 /** @type {import('vite').UserConfig} */

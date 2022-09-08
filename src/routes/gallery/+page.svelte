@@ -1,7 +1,7 @@
 <script lang="ts">
-  // import { onDestroy } from 'svelte'
-  // import { goto } from '$app/navigation'
-  // import { sessionStore } from '../../stores'
+  import { onDestroy } from 'svelte'
+  import { goto } from '$app/navigation'
+  import { sessionStore } from '../../stores'
   import { theme } from '../../stores'
   import { galleryStore } from './stores'
   import Dropzone from './components/upload/Dropzone.svelte'
@@ -19,17 +19,17 @@
     }))
 
   // If the user is not authed redirect them to the home page
-  // const unsubscribe = sessionStore.subscribe(newState => {
-  //   if (!newState.loading && !newState.authed) {
-  //     goto('/')
-  //   }
-  // })
+  const unsubscribe = sessionStore.subscribe(newState => {
+    if (!newState.loading && !newState.authed) {
+      goto('/')
+    }
+  })
 
-  // onDestroy(unsubscribe)
+  onDestroy(unsubscribe)
 </script>
 
 <div class="p-2 text-center">
-  <!-- {#if $sessionStore.authed} -->
+  {#if $sessionStore.authed}
     <div class="flex mb-4">
       <div
         class="tabs tabs-boxed w-fit border {$theme === 'light'
@@ -52,5 +52,5 @@
     <Dropzone>
       <ImageGallery />
     </Dropzone>
-  <!-- {/if} -->
+  {/if}
 </div>
