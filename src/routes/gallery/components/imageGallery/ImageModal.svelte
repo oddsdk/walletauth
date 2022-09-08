@@ -116,7 +116,7 @@
         <div class="relative">
           {#if showPreviousArrow}
             <button
-              class="absolute top-1/2 -left-[25px] -translate-y-1/2 inline-block text-center text-[40px]"
+              class="absolute top-1/2 -left-[21px] -translate-y-1/2 inline-block text-center text-[40px]"
               on:click={() => handleNextOrPrevImage('prev')}
             >
               &#8249;
@@ -129,7 +129,7 @@
           />
           {#if showNextArrow}
             <button
-              class="absolute top-1/2 -right-[25px] -translate-y-1/2 inline-block text-center text-[40px]"
+              class="absolute top-1/2 -right-[21px] -translate-y-1/2 inline-block text-center text-[40px]"
               on:click={() => handleNextOrPrevImage('next')}
             >
               &#8250;
