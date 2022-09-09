@@ -3,6 +3,12 @@ module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   plugins: [require('daisyui')],
   darkMode: ['class', '[data-theme="dark"]'],
+  purge: {
+    // These options are passed through directly to PurgeCSS
+    options: {
+      safelist: ['alert-success', 'alert-error', 'alert-info', 'alert-warning']
+    }
+  },
   daisyui: {
     styled: true,
     themes: [
