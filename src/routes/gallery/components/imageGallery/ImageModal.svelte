@@ -123,7 +123,7 @@
             </button>
           {/if}
           <img
-            class="block object-cover object-center w-full h-full mb-4"
+            class="block object-cover object-center w-full h-full mb-4 rounded-[1rem]"
             alt={`Image: ${image.name}`}
             src={image.src}
           />

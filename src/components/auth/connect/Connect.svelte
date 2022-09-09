@@ -5,7 +5,7 @@
 
 {#if $sessionStore.authed}
   <div class="dropdown dropdown-end">
-    <label tabindex="0" for="connectDropdown" class="m-1 hidden md:flex w-max max-w-[150px] cursor-pointer justify-between items-center rounded-full transition-colors duration-250 ease-in-out bg-gray-buttonDark dark:bg-gray-buttonLight border border-gray-900 dark:border-gray-50 group text-sm py-2 pr-2 pl-3"><span
+    <label tabindex="0" for="connectDropdown" class="m-1 hidden md:flex w-max max-w-[150px] cursor-pointer justify-between items-center rounded-full border dark:text-gray-50 dark:border-gray-50 border-slate-900 bg-gray-50 dark:bg-slate-900 hover:text-gray-50 hover:bg-slate-900 dark:hover:text-slate-900 dark:hover:bg-gray-50 transition-colors duration-250ms ease-in-out group text-sm py-2 pr-2 pl-3"><span
       class="overflow-hidden text-ellipsis w-full inline-block"
       >{$sessionStore?.address}</span
     ></label>
