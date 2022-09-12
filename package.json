@@ -1,7 +1,5 @@
 {
-  "name": "walletauth",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -16,8 +14,10 @@
     "@sveltejs/adapter-static": "^1.0.0-next.39",
     "@sveltejs/kit": "1.0.0-next.431",
     "autoprefixer": "^10.4.4",
+    "buffer": "^6.0.3",
     "daisyui": "^2.0.2",
     "esbuild": "*",
+    "events": "^3.3.0",
     "node-fetch": "*",
     "postcss": "^8.4.12",
     "svelte": "^3.44.0",
@@ -25,13 +25,11 @@
     "svelte-preprocess": "^4.10.6",
     "tailwindcss": "^3.0.24",
     "typescript": "^4.5.4",
+    "undici": "*",
     "vite": "^3.1.0-beta.1"
   },
   "dependencies": {
-    "buffer": "^6.0.3",
-    "events": "^3.3.0",
-    "undici": "*",
     "webnative": "^0.34.1",
-    "webnative-walletauth": "file:../webnative-walletauth"
+    "webnative-walletauth": "fission-codes/webnative-walletauth"
   }
 }
