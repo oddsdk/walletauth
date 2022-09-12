@@ -1,0 +1,30 @@
+name: Deploy app
+
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to Fission
+        uses: fission-suite/publish-action@v1
+        with:
+          machine_key: ${{ secrets.FISSION_PRODUCTION_KEY }}
+          build_dir: ./build
+          app_url: walletauth.fission.app
