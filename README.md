@@ -7,7 +7,7 @@ A web app template for Webnative WalletAuth.
 Install dependencies.
 
 ```shell
-yarn
+npm i
 ```
 
 ## Develop
@@ -15,7 +15,7 @@ yarn
 Work on the application in local development.
 
 ```shell
-yarn dev
+npm run dev
 ```
 
 Navigate to `http://localhost:5173` in your web browser.
@@ -25,7 +25,7 @@ Navigate to `http://localhost:5173` in your web browser.
 Export a static build.
 
 ```shell
-yarn build
+npm run build
 ```
 
 The build outputs the static site to the `build` directory.
