@@ -7,6 +7,7 @@ import { addNotification } from '$lib/notifications'
 import {
   isUsernameAvailable
 } from 'webnative/lobby/index'
+import * as auth from 'webnative/auth/index'
 
 export type Session = {
   address: string
@@ -16,12 +17,13 @@ export type Session = {
 }
 
 export const testWebnative = async () => {
-  const res = await window.ethereum.request({ method: "eth_requestAccounts" })
-  console.log('res', res)
-  const isNewUser = await isUsernameAvailable(res[0])
+  const [username] = await (window as any).ethereum.request({ method: "eth_requestAccounts" })
+  console.log('username', username)
+  const isNewUser = await isUsernameAvailable(username)
   console.log('isNewUser', isNewUser)
 
-
+  const res = await auth.register({ username })
+  console.log('res', res)
 }
 
 /**
