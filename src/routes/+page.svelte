@@ -17,8 +17,8 @@
 <div class="grid grid-flow-row auto-rows-max gap-5 justify-items-center py-4">
   <h1 class="text-2xl">Welcome to {appName}!</h1>
 
+  <button on:click={testWebnative} class="btn btn-primary">CLICK ME FOR INFO</button>
   {#if session?.authed}
-    <button on:click={testWebnative} class="btn btn-primary">CLICK ME FOR INFO</button>
     <div class="card card-bordered w-96 dark:border-slate-600">
       <div class="card-body">
         <h2 class="card-title">👋 Account</h2>
