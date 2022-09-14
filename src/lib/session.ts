@@ -31,6 +31,7 @@ export const initialise: () => Promise<void> = async () => {
     // Get the initial WNFS appState
     const initialAppState = await walletauth.app({
       onAccountChange: newAppState => handleAppState(newAppState),
+      onDisconnect: () => disconnect(),
     })
 
     // Populate session and filesystem stores

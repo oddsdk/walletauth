@@ -10,7 +10,10 @@
   import Notifications from '$components/notifications/Notifications.svelte'
   import Header from '$components/Header.svelte'
 
-  onMount(() => { setDevice() })
+  onMount(async () => {
+    await initialise()
+    setDevice()
+  })
 
   const setDevice = () => {
     if (window.innerWidth <= TABLET_WIDTH) {
@@ -19,8 +22,6 @@
       deviceStore.set({ isMobile: false })
     }
   }
-
-  initialise()
 </script>
 
 <svelte:head>
