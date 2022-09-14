@@ -3,7 +3,7 @@
 
   import { sessionStore } from '../stores'
   import { appName } from '$lib/app-info'
-  import { copyAddressToClipboard, type Session } from '$lib/session'
+  import { testWebnative, copyAddressToClipboard, type Session } from '$lib/session'
 
   let session: Session
 
@@ -18,6 +18,7 @@
   <h1 class="text-2xl">Welcome to {appName}!</h1>
 
   {#if session?.authed}
+    <button on:click={testWebnative} class="btn btn-primary">CLICK ME FOR INFO</button>
     <div class="card card-bordered w-96 dark:border-slate-600">
       <div class="card-body">
         <h2 class="card-title">👋 Account</h2>

@@ -4,12 +4,24 @@ import * as walletauth from 'webnative-walletauth'
 import { AppScenario, leave } from 'webnative'
 import { filesystemStore, sessionStore } from '../stores'
 import { addNotification } from '$lib/notifications'
+import {
+  isUsernameAvailable
+} from 'webnative/lobby/index'
 
 export type Session = {
   address: string
   authed: boolean
   loading: boolean
   error: boolean
+}
+
+export const testWebnative = async () => {
+  const res = await window.ethereum.request({ method: "eth_requestAccounts" })
+  console.log('res', res)
+  const isNewUser = await isUsernameAvailable(res[0])
+  console.log('isNewUser', isNewUser)
+
+
 }
 
 /**
