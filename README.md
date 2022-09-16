@@ -1,5 +1,7 @@
 # Webnative WalletAuth App Template
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9008a4d3-cfd2-47bf-8506-79e0ca4f898c/deploy-status)](https://app.netlify.com/sites/webnative-walletauth/deploys)
+
 A web app template for Webnative WalletAuth.
 
 ## Setup
