@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "webnative": "^0.34.1",
-    "webnative-walletauth": "fission-codes/webnative-walletauth"
+    "webnative-walletauth": "fission-codes/webnative-walletauth#a8db611b6b4ab1ce55d20b1e4b86694f504eac9c"
   }
 }
