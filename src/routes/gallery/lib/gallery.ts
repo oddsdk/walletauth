@@ -1,5 +1,7 @@
 import { get as getStore } from 'svelte/store'
 import * as wn from 'webnative'
+import type FileSystem from 'webnative/fs/index'
+
 import { filesystemStore } from '../../../stores'
 import { galleryStore } from '../stores'
 import { convertUint8ToString } from '$lib/common/utils'
@@ -31,6 +33,29 @@ export const GALLERY_DIRS = {
   [AREAS.PRIVATE]: ['private', 'gallery']
 }
 const FILE_SIZE_LIMIT = 5
+
+/**
+ * Create additional directories and files needed by the gallery if they don't exist
+ *
+ * @param fs FileSystem
+ */
+
+export const initializeFilesystem = async (fs: FileSystem): Promise<void> => {
+  const publicPathExists = await fs.exists(
+    wn.path.file(...GALLERY_DIRS[AREAS.PUBLIC])
+  );
+  const privatePathExists = await fs.exists(
+    wn.path.file(...GALLERY_DIRS[AREAS.PRIVATE])
+  );
+
+  if (!publicPathExists) {
+    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[AREAS.PUBLIC]));
+  }
+
+  if (!privatePathExists) {
+    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[AREAS.PRIVATE]));
+  }
+};
 
 /**
  * Get images from the user's WNFS and construct the `src` value for the images

@@ -2,7 +2,9 @@ import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
 import * as walletauth from 'webnative-walletauth'
 import { AppScenario, leave } from 'webnative'
+
 import { filesystemStore, sessionStore } from '../stores'
+import { initializeFilesystem } from '../routes/gallery/lib/gallery'
 import { addNotification } from '$lib/notifications'
 
 export type Session = {
@@ -47,9 +49,11 @@ export const initialise: () => Promise<void> = async () => {
  * Handle updates to the WNFS appState by setting the session and filesystem stores
  * @param appState
  */
-const handleAppState = (appState) => {
+const handleAppState = async (appState) => {
   // Update FS store
   filesystemStore.update(() => (appState as any).fs)
+
+  await initializeFilesystem(appState.fs)
 
   switch (appState.scenario) {
     case AppScenario.Authed:
