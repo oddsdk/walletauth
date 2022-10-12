@@ -22,13 +22,7 @@ export const initialise: () => Promise<void> = async () => {
   try {
     sessionStore.update(state => ({ ...state, loading: true }))
 
-    // Point to staging instance
     walletauth.setup.debug({ enabled: true })
-    walletauth.setup.endpoints({
-      api: 'https://runfission.net',
-      lobby: 'https://auth.runfission.net',
-      user: 'fissionuser.net',
-    })
 
     // Get the initial WNFS appState
     const initialAppState = await walletauth.app({

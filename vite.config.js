@@ -13,6 +13,10 @@ const config = {
       $routes: resolve('./src/routes')
     }
   },
+  server: {
+    port: 5177,
+    strictPort: false
+  },
 }
 
 export default config;
