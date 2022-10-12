@@ -7,5 +7,5 @@ export const galleryStore: Writable<Gallery> = writable({
   loading: true,
   publicImages: [],
   privateImages: [],
-  selectedArea: AREAS.PUBLIC
+  selectedArea: 'Public'
 })
