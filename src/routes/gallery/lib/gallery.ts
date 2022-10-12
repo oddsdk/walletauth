@@ -3,14 +3,9 @@ import * as wn from 'webnative'
 import type FileSystem from 'webnative/fs/index'
 
 import { filesystemStore } from '../../../stores'
-import { galleryStore } from '../stores'
+import { galleryStore, AREAS } from '../stores'
 import { convertUint8ToString } from '$lib/common/utils'
 import { addNotification } from '$lib/notifications'
-
-export enum AREAS {
-  PUBLIC = 'Public',
-  PRIVATE = 'Private'
-}
 
 export type Image = {
   cid: string

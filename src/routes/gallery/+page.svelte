@@ -3,10 +3,9 @@
   import { goto } from '$app/navigation'
   import { sessionStore } from '../../stores'
   import { theme } from '../../stores'
-  import { galleryStore } from './stores'
+  import { galleryStore, AREAS } from './stores'
   import Dropzone from './components/upload/Dropzone.svelte'
   import ImageGallery from './components/imageGallery/ImageGallery.svelte'
-  import { AREAS } from './lib/gallery'
 
   /**
    * Tab between the public/private areas and load associated images
