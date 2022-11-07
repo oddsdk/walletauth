@@ -1,7 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy, onMount } from 'svelte'
-  import { galleryStore } from '../../stores'
-  import { deleteImageFromWNFS, type Gallery, type Image } from '../../lib/gallery'
+
+  import { ipfsGatewayUrl } from '$lib/app-info';
+  import { galleryStore } from '$routes/gallery/stores'
+  import { deleteImageFromWNFS, type Gallery, type Image } from '$routes/gallery/lib/gallery'
 
   export let image: Image
   export let isModalOpen: boolean = false
@@ -100,36 +102,34 @@
     class="modal cursor-pointer z-50"
     on:click|self={handleCloseModal}
   >
-    <div
-      class="modal-box relative text-center text-base-content border dark:border-slate-600"
-    >
+    <div class="modal-box relative text-center text-base-content">
       <label
         for={`image-modal-${image.cid}`}
-        class="btn btn-xs btn-circle absolute right-2 top-2 dark:bg-slate-600"
+        class="btn btn-xs btn-circle absolute right-2 top-2"
         on:click={handleCloseModal}
       >
         ✕
       </label>
       <div>
-        <h3 class="mb-7 text-xl font-serif">{image.name}</h3>
+        <h3 class="mb-7 text-lg break-all">{image.name}</h3>
 
         <div class="relative">
           {#if showPreviousArrow}
             <button
-              class="absolute top-1/2 -left-[21px] -translate-y-1/2 inline-block text-center text-[40px]"
+              class="absolute top-1/2 -left-[25px] -translate-y-1/2 inline-block text-center text-[40px]"
               on:click={() => handleNextOrPrevImage('prev')}
             >
               &#8249;
             </button>
           {/if}
           <img
-            class="block object-cover object-center w-full h-full mb-4 rounded-[1rem]"
+            class="block object-cover object-center border-2 border-base-content w-full h-full mb-4 rounded-[1rem]"
             alt={`Image: ${image.name}`}
             src={image.src}
           />
           {#if showNextArrow}
             <button
-              class="absolute top-1/2 -right-[21px] -translate-y-1/2 inline-block text-center text-[40px]"
+              class="absolute top-1/2 -right-[25px] -translate-y-1/2 inline-block text-center text-[40px]"
               on:click={() => handleNextOrPrevImage('next')}
             >
               &#8250;
@@ -138,7 +138,7 @@
         </div>
         <div class="flex flex-col items-center justify-center">
           <a
-            href={`https://ipfs.runfission.net/ipfs/${image.cid}/userland`}
+            href={`https://ipfs.${ipfsGatewayUrl}/ipfs/${image.cid}/userland`}
             target="_blank"
             class="underline mb-4 hover:text-slate-500"
           >
@@ -151,10 +151,7 @@
             <a href={image.src} download={image.name} class="btn btn-primary">
               Download Image
             </a>
-            <button
-              class="btn bg-error text-white"
-              on:click={handleDeleteImage}
-            >
+            <button class="btn btn-outline" on:click={handleDeleteImage}>
               Delete Image
             </button>
           </div>

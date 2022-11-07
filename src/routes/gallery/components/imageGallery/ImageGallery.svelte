@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onDestroy } from 'svelte'
-  import { galleryStore, AREAS } from '../../stores'
-  import { filesystemStore, sessionStore } from '../../../../stores'
-  import { getImagesFromWNFS, type Image } from '../../lib/gallery'
-  import FileUploadCard from '../upload/FileUploadCard.svelte'
-  import ImageCard from './ImageCard.svelte'
-  import ImageModal from './ImageModal.svelte'
+
+  import { filesystemStore, sessionStore } from '$src/stores'
+  import { AREAS, galleryStore } from '$routes/gallery/stores'
+  import { getImagesFromWNFS, type Image } from '$routes/gallery/lib/gallery'
+  import FileUploadCard from '$routes/gallery/components/upload/FileUploadCard.svelte'
+  import ImageCard from '$routes/gallery/components/imageGallery/ImageCard.svelte'
+  import ImageModal from '$routes/gallery/components/imageGallery/ImageModal.svelte'
 
   /**
    * Open the ImageModal and pass it the selected `image` from the gallery
@@ -48,8 +49,10 @@
 </script>
 
 <section class="overflow-hidden text-gray-700">
-  <div class="p-4 mx-auto">
-    <div class="flex flex-wrap -m-1 md:-m-2">
+  <div class="pt-8 p-6 md:p-8 mx-auto">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:lg:grid-cols-6 gap-4"
+    >
       <FileUploadCard />
       {#each $galleryStore.selectedArea === AREAS.PRIVATE ? $galleryStore.privateImages : $galleryStore.publicImages as image}
         <ImageCard {image} openModal={setSelectedImage} />

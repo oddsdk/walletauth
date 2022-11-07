@@ -27,6 +27,7 @@
 			"$components/*": ["src/components/*"],
 			"$lib/*": ["src/lib/*"],
 			"$routes/*": ["src/routes/*"],
+			"$src/*": ["src/*"],
 		},
 		"typeRoots": ["src/@types", "node_modules/@types"]
 	},

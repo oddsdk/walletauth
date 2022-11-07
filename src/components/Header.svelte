@@ -1,38 +1,84 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { theme } from '../stores'
+  import { page } from '$app/stores'
+  import { sessionStore, themeStore } from '../stores'
   import { storeTheme, type Theme } from '$lib/theme'
-  import { appName } from '$lib/app-info'
-  import Brand from '$components/icons/Brand.svelte'
+  import AlphaTag from '$components/nav/AlphaTag.svelte'
+  import Avatar from '$components/settings/Avatar.svelte'
+  import BrandLogo from '$components/icons/BrandLogo.svelte'
+  import BrandWordmark from '$components/icons/BrandWordmark.svelte'
   import Connect from '$components/auth/connect/Connect.svelte'
   import DarkMode from '$components/icons/DarkMode.svelte'
+  import Hamburger from '$components/icons/Hamburger.svelte'
   import LightMode from '$components/icons/LightMode.svelte'
 
   const setTheme = (newTheme: Theme) => {
-    theme.set(newTheme)
+    themeStore.set(newTheme)
     storeTheme(newTheme)
   }
+
 </script>
 
-<header class="navbar bg-base-100 pt-0">
-  <div class="flex-1 cursor-pointer hover:underline" on:click={() => goto('/')}>
-    <Brand />
-    <span class="text-xl ml-2">{appName}</span>
-  </div>
-
-  <div class="flex-none">
-    <Connect />
-  </div>
-
-  <span class="ml-2">
-    {#if $theme === 'light'}
-      <span on:click={() => setTheme('dark')}>
-        <LightMode />
-      </span>
+<header class="navbar flex bg-base-100 pt-4">
+  <div class="lg:hidden">
+    {#if $sessionStore.authed}
+      <label
+        for="sidebar-nav"
+        class="drawer-button cursor-pointer -translate-x-2"
+      >
+        <Hamburger />
+      </label>
     {:else}
-      <span on:click={() => setTheme('light')}>
-        <DarkMode />
-      </span>
+      <div
+        class="flex items-center cursor-pointer gap-3"
+        on:click={() => goto('/')}
+      >
+        <BrandLogo />
+        <AlphaTag />
+      </div>
     {/if}
-  </span>
+  </div>
+
+  <!-- Even if the user is not authed, render this header in the connection flow -->
+  {#if !$sessionStore.authed || $page.url.pathname.match(/register|backup|delegate/)}
+    <div
+      class="hidden lg:flex flex-1 items-center cursor-pointer gap-3"
+      on:click={() => goto('/')}
+    >
+      <BrandLogo />
+      <div class="hidden lg:inline-block">
+        <BrandWordmark />
+      </div>
+      <div class="hidden sm:inline-block">
+        <AlphaTag />
+      </div>
+    </div>
+  {/if}
+
+  <div class="ml-auto">
+    {#if !$sessionStore.loading && !$sessionStore.authed}
+      <div class="flex-none">
+        <Connect />
+      </div>
+    {/if}
+
+    {#if $sessionStore.authed}
+      <a href="/settings" class="ml-2 cursor-pointer">
+        <Avatar size="small" />
+      </a>
+    {/if}
+
+    <span class="ml-2 cursor-pointer">
+      {#if $themeStore === 'light'}
+        <span on:click={() => setTheme('dark')}>
+          <LightMode />
+        </span>
+      {:else}
+        <span on:click={() => setTheme('light')}>
+          <DarkMode />
+        </span>
+      {/if}
+    </span>
+  </div>
 </header>
+

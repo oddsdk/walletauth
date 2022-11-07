@@ -1,12 +1,12 @@
 <script lang="ts">
   import { fade, fly } from 'svelte/transition'
 
+  import { themeStore } from '../../stores'
+  import type { Notification } from '$lib/notifications'
   import CheckThinIcon from '$components/icons/CheckThinIcon.svelte'
   import InfoThinIcon from '$components/icons/InfoThinIcon.svelte'
   import WarningThinIcon from '$components/icons/WarningThinIcon.svelte'
   import XThinIcon from '$components/icons/XThinIcon.svelte'
-  import { theme as themeStore } from '../../stores'
-  import type { Notification } from '$lib/notifications'
 
   export let notification: Notification
 
@@ -26,7 +26,7 @@
     success: {
       component: CheckThinIcon,
       props: {
-        color: $themeStore === 'light' ? '#b8ffd3' : '#002e12'
+        color: '#14532D'
       }
     },
     warning: {
@@ -45,7 +45,7 @@
   aria-live="assertive"
   aria-atomic="true"
 >
-  <div class="alert alert-{notification.type} text-sm text-base-content mb-3 peer-last:mb-0">
+  <div class="alert alert-{notification.type} text-sm mb-3 peer-last:mb-0">
     <div>
       <svelte:component
         this={iconMap[notification.type].component}

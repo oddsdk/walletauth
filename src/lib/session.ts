@@ -1,11 +1,13 @@
 import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
+import * as wn from 'webnative'
 import * as walletauth from 'webnative-walletauth'
 import { AppScenario, leave } from 'webnative'
 
 import { filesystemStore, sessionStore } from '../stores'
 import { initializeFilesystem } from '../routes/gallery/lib/gallery'
 import { addNotification } from '$lib/notifications'
+import { ACCOUNT_SETTINGS_DIR } from '$lib/account-settings'
 
 export type Session = {
   address: string
@@ -47,7 +49,11 @@ const handleAppState = async (appState) => {
   // Update FS store
   filesystemStore.update(() => (appState as any).fs)
 
+  // Create directories for the gallery
   await initializeFilesystem(appState.fs)
+
+  // Create directory for Account Settings
+  await appState.fs.mkdir(wn.path.directory(...ACCOUNT_SETTINGS_DIR))
 
   switch (appState.scenario) {
     case AppScenario.Authed:

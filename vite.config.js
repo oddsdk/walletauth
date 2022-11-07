@@ -10,13 +10,14 @@ const config = {
   resolve: {
     alias: {
       $components: resolve('./src/components'),
-      $routes: resolve('./src/routes')
+      $routes: resolve('./src/routes'),
+      $src: resolve('./src')
     }
   },
   server: {
     port: 5177,
     strictPort: false
-  },
+  }
 }
 
 export default config;
