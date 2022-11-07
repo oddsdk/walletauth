@@ -19,7 +19,7 @@
 
       <div>
         <h3 class="text-lg mb-4">Address</h3>
-        <p class="cursor-pointer" on:click={copyAddressToClipboard}>{$sessionStore.address}</p>
+        <p class="cursor-pointer transition-colors hover:text-orange-300" on:click={copyAddressToClipboard}>{$sessionStore.address}</p>
       </div>
 
       <div>
