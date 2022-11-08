@@ -19,7 +19,7 @@
       You can fork this
       <a
         class="link link-primary whitespace-nowrap"
-        href="https://github.com/webnative-examples/webnative-app-template"
+        href="https://github.com/webnative-examples/walletauth"
         target="_blank"
       >
         template
