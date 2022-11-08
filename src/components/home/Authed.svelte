@@ -3,7 +3,7 @@
 
   const start_and_end = (str: string) => {
     if (str.length > 35) {
-      return str.substr(0, 4) + '.....' + str.substr(str.length-4, str.length)
+      return str.substr(0, 5) + '.....' + str.substr(str.length-4, str.length)
     }
     return str
   }
