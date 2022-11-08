@@ -5,10 +5,12 @@
   import { appDescription, appName, appURL } from '$lib/app-info'
   import { TABLET_WIDTH } from '$lib/device'
   import { initialise } from '$lib/session'
-  import { deviceStore, sessionStore, theme } from '../stores'
+  import { deviceStore, sessionStore, themeStore } from '../stores'
   import FullScreenLoadingSpinner from '$components/common/FullScreenLoadingSpinner.svelte'
   import Notifications from '$components/notifications/Notifications.svelte'
+  import Footer from '$components/Footer.svelte'
   import Header from '$components/Header.svelte'
+  import SidebarNav from '$components/nav/SidebarNav.svelte'
 
   onMount(async () => {
     await initialise()
@@ -54,13 +56,18 @@
 
 <svelte:window on:resize={setDevice} />
 
-<div data-theme={$theme} class="min-h-screen">
-  <Header />
+<div data-theme={$themeStore} class="min-h-screen">
   <Notifications />
 
   {#if $sessionStore.loading}
     <FullScreenLoadingSpinner />
   {:else}
-    <slot />
+    <SidebarNav>
+      <Header />
+      <div class="px-4">
+      <slot />
+      </div>
+    </SidebarNav>
   {/if}
+  <Footer />
 </div>

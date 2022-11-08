@@ -1,10 +1,13 @@
 import { get as getStore } from 'svelte/store'
 import * as wn from 'webnative'
 import type FileSystem from 'webnative/fs/index'
+import * as uint8arrays from 'uint8arrays'
+import type { CID } from 'multiformats/cid'
+import type { PuttableUnixTree, File as WNFile } from 'webnative/fs/types'
+import type { Metadata } from 'webnative/fs/metadata'
 
-import { filesystemStore } from '../../../stores'
-import { galleryStore, AREAS } from '../stores'
-import { convertUint8ToString } from '$lib/common/utils'
+import { filesystemStore } from '$src/stores'
+import { AREAS, galleryStore } from '$routes/gallery/stores'
 import { addNotification } from '$lib/notifications'
 
 export type Image = {
@@ -21,6 +24,19 @@ export type Gallery = {
   privateImages: Image[] | null
   selectedArea: AREAS
   loading: boolean
+}
+
+interface GalleryFile extends PuttableUnixTree, WNFile {
+  cid: CID
+  content: Uint8Array
+  header: {
+    content: Uint8Array
+    metadata: Metadata
+  }
+}
+
+type Link = {
+  size: number
 }
 
 export const GALLERY_DIRS = {
@@ -79,20 +95,21 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
         // The CID for private files is currently located in `file.header.content`,
         // whereas the CID for public files is located in `file.cid`
         const cid = isPrivate
-          ? (file as any).header.content.toString()
-          : (file as any).cid.toString()
+          ? (file as GalleryFile).header.content.toString()
+          : (file as GalleryFile).cid.toString()
 
         // Create a base64 string to use as the image `src`
-        const src = `data:image/jpeg;base64, ${btoa(
-          convertUint8ToString((file as any).content as Uint8Array)
+        const src = `data:image/jpeg;base64, ${uint8arrays.toString(
+          (file as GalleryFile).content,
+          'base64'
         )}`
 
         return {
           cid,
-          ctime: (file as any).header.metadata.unixMeta.ctime,
+          ctime: (file as GalleryFile).header.metadata.unixMeta.ctime,
           name,
           private: isPrivate,
-          size: (links[name] as any).size,
+          size: (links[name] as Link).size,
           src
         }
       })
@@ -157,11 +174,10 @@ export const uploadImageToWNFS: (
     // Announce the changes to the server
     await fs.publish()
 
-    console.log(`${image.name} image has been published`)
     addNotification(`${image.name} image has been published`, 'success')
   } catch (error) {
     addNotification(error.message, 'error')
-    console.log(error)
+    console.error(error)
   }
 }
 
@@ -187,7 +203,6 @@ export const deleteImageFromWNFS: (
       // Announce the changes to the server
       await fs.publish()
 
-      console.log(`${name} image has been deleted`)
       addNotification(`${name} image has been deleted`, 'success')
 
       // Refetch images and update galleryStore
