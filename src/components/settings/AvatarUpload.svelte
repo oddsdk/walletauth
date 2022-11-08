@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { accountSettingsStore, sessionStore } from '$src/stores'
   import { handleFileInput } from '$lib/account-settings'
   import Avatar from '$components/settings/Avatar.svelte'
 
