@@ -17,9 +17,7 @@
 
       <Address />
 
-      <div>
-        <ThemePreferences />
-      </div>
+      <ThemePreferences />
     </div>
   </div>
 {:else}
