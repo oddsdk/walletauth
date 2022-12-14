@@ -40,8 +40,8 @@ type Link = {
 }
 
 export const GALLERY_DIRS = {
-  [AREAS.PUBLIC]: ['public', 'gallery'],
-  [AREAS.PRIVATE]: ['private', 'gallery']
+  [ AREAS.PUBLIC ]: [ 'public', 'gallery' ],
+  [ AREAS.PRIVATE ]: [ 'private', 'gallery' ]
 }
 const FILE_SIZE_LIMIT = 5
 
@@ -53,18 +53,18 @@ const FILE_SIZE_LIMIT = 5
 
 export const initializeFilesystem = async (fs: FileSystem): Promise<void> => {
   const publicPathExists = await fs.exists(
-    wn.path.file(...GALLERY_DIRS[AREAS.PUBLIC])
+    wn.path.file(...GALLERY_DIRS[ AREAS.PUBLIC ])
   );
   const privatePathExists = await fs.exists(
-    wn.path.file(...GALLERY_DIRS[AREAS.PRIVATE])
+    wn.path.file(...GALLERY_DIRS[ AREAS.PRIVATE ])
   );
 
   if (!publicPathExists) {
-    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[AREAS.PUBLIC]));
+    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[ AREAS.PUBLIC ]));
   }
 
   if (!privatePathExists) {
-    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[AREAS.PRIVATE]));
+    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[ AREAS.PRIVATE ]));
   }
 };
 
@@ -81,15 +81,15 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
     const fs = getStore(filesystemStore)
 
     // Set path to either private or public gallery dir
-    const path = wn.path.directory(...GALLERY_DIRS[selectedArea])
+    const path = wn.path.directory(...GALLERY_DIRS[ selectedArea ])
 
     // Get list of links for files in the gallery dir
     const links = await fs.ls(path)
 
     const images = await Promise.all(
-      Object.entries(links).map(async ([name]) => {
+      Object.entries(links).map(async ([ name ]) => {
         const file = await fs.get(
-          wn.path.file(...GALLERY_DIRS[selectedArea], `${name}`)
+          wn.path.file(...GALLERY_DIRS[ selectedArea ], `${name}`)
         )
 
         // The CID for private files is currently located in `file.header.content`,
@@ -109,7 +109,7 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
           ctime: (file as GalleryFile).header.metadata.unixMeta.ctime,
           name,
           private: isPrivate,
-          size: (links[name] as Link).size,
+          size: (links[ name ] as Link).size,
           src
         }
       })
@@ -124,11 +124,11 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
       ...store,
       ...(isPrivate
         ? {
-            privateImages: images
-          }
+          privateImages: images
+        }
         : {
-            publicImages: images
-          }),
+          publicImages: images
+        }),
       loading: false
     }))
   } catch (error) {
@@ -159,7 +159,7 @@ export const uploadImageToWNFS: (
 
     // Reject the upload if the image already exists in the directory
     const imageExists = await fs.exists(
-      wn.path.file(...GALLERY_DIRS[selectedArea], image.name)
+      wn.path.file(...GALLERY_DIRS[ selectedArea ], image.name)
     )
     if (imageExists) {
       throw new Error(`${image.name} image already exists`)
@@ -167,8 +167,10 @@ export const uploadImageToWNFS: (
 
     // Create a sub directory and add some content
     await fs.write(
-      wn.path.file(...GALLERY_DIRS[selectedArea], image.name),
-      image
+      wn.path.file(...GALLERY_DIRS[ selectedArea ], image.name),
+      new Uint8Array(
+        await new Blob([ image ]).arrayBuffer()
+      )
     )
 
     // Announce the changes to the server
@@ -193,12 +195,12 @@ export const deleteImageFromWNFS: (
     const fs = getStore(filesystemStore)
 
     const imageExists = await fs.exists(
-      wn.path.file(...GALLERY_DIRS[selectedArea], name)
+      wn.path.file(...GALLERY_DIRS[ selectedArea ], name)
     )
 
     if (imageExists) {
       // Remove images from server
-      await fs.rm(wn.path.file(...GALLERY_DIRS[selectedArea], name))
+      await fs.rm(wn.path.file(...GALLERY_DIRS[ selectedArea ], name))
 
       // Announce the changes to the server
       await fs.publish()
