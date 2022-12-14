@@ -1,14 +1,14 @@
 import { get as getStore } from 'svelte/store'
 import * as wn from 'webnative'
 import type FileSystem from 'webnative/fs/index'
-import * as uint8arrays from 'uint8arrays'
-import type { CID } from 'multiformats/cid'
-import type { PuttableUnixTree, File as WNFile } from 'webnative/fs/types'
-import type { Metadata } from 'webnative/fs/metadata'
+import type PublicFile from 'webnative/fs/v1/PublicFile'
+import type PrivateFile from 'webnative/fs/v1/PrivateFile'
+import { isFile } from 'webnative/fs/types/check'
 
 import { filesystemStore } from '$src/stores'
 import { AREAS, galleryStore } from '$routes/gallery/stores'
 import { addNotification } from '$lib/notifications'
+import { fileToUint8Array } from '$lib/utils'
 
 export type Image = {
   cid: string
@@ -26,15 +26,6 @@ export type Gallery = {
   loading: boolean
 }
 
-interface GalleryFile extends PuttableUnixTree, WNFile {
-  cid: CID
-  content: Uint8Array
-  header: {
-    content: Uint8Array
-    metadata: Metadata
-  }
-}
-
 type Link = {
   size: number
 }
@@ -43,7 +34,7 @@ export const GALLERY_DIRS = {
   [ AREAS.PUBLIC ]: [ 'public', 'gallery' ],
   [ AREAS.PRIVATE ]: [ 'private', 'gallery' ]
 }
-const FILE_SIZE_LIMIT = 5
+const FILE_SIZE_LIMIT = 20
 
 /**
  * Create additional directories and files needed by the gallery if they don't exist
@@ -86,27 +77,31 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
     // Get list of links for files in the gallery dir
     const links = await fs.ls(path)
 
-    const images = await Promise.all(
+    let images = await Promise.all(
       Object.entries(links).map(async ([ name ]) => {
         const file = await fs.get(
           wn.path.file(...GALLERY_DIRS[ selectedArea ], `${name}`)
         )
 
+        if (!isFile(file)) return null
+
         // The CID for private files is currently located in `file.header.content`,
         // whereas the CID for public files is located in `file.cid`
         const cid = isPrivate
-          ? (file as GalleryFile).header.content.toString()
-          : (file as GalleryFile).cid.toString()
+          ? (file as PrivateFile).header.content.toString()
+          : (file as PublicFile).cid.toString()
 
-        // Create a base64 string to use as the image `src`
-        const src = `data:image/jpeg;base64, ${uint8arrays.toString(
-          (file as GalleryFile).content,
-          'base64'
-        )}`
+        // Create a blob to use as the image `src`
+        const blob = new Blob([ file.content ])
+        const src = URL.createObjectURL(blob)
+
+        const ctime = isPrivate
+          ? (file as PrivateFile).header.metadata.unixMeta.ctime
+          : (file as PublicFile).header.metadata.unixMeta.ctime
 
         return {
           cid,
-          ctime: (file as GalleryFile).header.metadata.unixMeta.ctime,
+          ctime,
           name,
           private: isPrivate,
           size: (links[ name ] as Link).size,
@@ -117,6 +112,7 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
 
     // Sort images by ctime(created at date)
     // NOTE: this will eventually be controlled via the UI
+    images = images.filter(a => !!a)
     images.sort((a, b) => b.ctime - a.ctime)
 
     // Push images to the galleryStore
@@ -151,10 +147,10 @@ export const uploadImageToWNFS: (
     const { selectedArea } = getStore(galleryStore)
     const fs = getStore(filesystemStore)
 
-    // Reject files over 5MB
+    // Reject files over 20MB
     const imageSizeInMB = image.size / (1024 * 1024)
     if (imageSizeInMB > FILE_SIZE_LIMIT) {
-      throw new Error('Image can be no larger than 5MB')
+      throw new Error('Image can be no larger than 20MB')
     }
 
     // Reject the upload if the image already exists in the directory
@@ -168,9 +164,7 @@ export const uploadImageToWNFS: (
     // Create a sub directory and add some content
     await fs.write(
       wn.path.file(...GALLERY_DIRS[ selectedArea ], image.name),
-      new Uint8Array(
-        await new Blob([ image ]).arrayBuffer()
-      )
+      await fileToUint8Array(image)
     )
 
     // Announce the changes to the server

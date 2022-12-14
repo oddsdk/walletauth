@@ -6,9 +6,9 @@
   <div class="max-w-[573px]">
     <p class="mb-5">
       <a
-        class="link link-primary whitespace-nowrap"
+        class="link text-blue-600 whitespace-nowrap"
         href="https://github.com/fission-codes/webnative"
-        target="_blank"
+        target="_blank" rel="noreferrer"
       >
         Webnative SDK
         <span class="-scale-x-100 scale-y-100 inline-block">⎋</span>
@@ -18,18 +18,18 @@
     <p>
       You can fork this
       <a
-        class="link link-primary whitespace-nowrap"
-        href="https://github.com/webnative-examples/walletauth"
-        target="_blank"
+        class="link text-blue-600 whitespace-nowrap"
+        href="https://github.com/webnative-examples/webnative-app-template"
+        target="_blank" rel="noreferrer"
       >
         template
         <span class="-scale-x-100 scale-y-100 inline-block">⎋</span>
       </a>
       to start writing your own Webnative app. Learn more in the
       <a
-        class="link link-primary whitespace-nowrap"
+        class="link text-blue-600 whitespace-nowrap"
         href="https://guide.fission.codes/"
-        target="_blank"
+        target="_blank" rel="noreferrer"
       >
         Webnative Guide
         <span class="-scale-x-100 scale-y-100 inline-block">⎋</span>

@@ -1,19 +1,22 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { page } from '$app/stores'
   import { sessionStore, themeStore } from '../stores'
-  import { storeTheme, type Theme } from '$lib/theme'
+  import { DEFAULT_THEME_KEY, storeTheme, type ThemeOptions } from '$lib/theme'
   import AlphaTag from '$components/nav/AlphaTag.svelte'
   import Avatar from '$components/settings/Avatar.svelte'
   import BrandLogo from '$components/icons/BrandLogo.svelte'
   import BrandWordmark from '$components/icons/BrandWordmark.svelte'
-  import Connect from '$components/auth/connect/Connect.svelte'
   import DarkMode from '$components/icons/DarkMode.svelte'
   import Hamburger from '$components/icons/Hamburger.svelte'
   import LightMode from '$components/icons/LightMode.svelte'
 
-  const setTheme = (newTheme: Theme) => {
-    themeStore.set(newTheme)
+  const setTheme = (newTheme: ThemeOptions) => {
+    localStorage.setItem(DEFAULT_THEME_KEY, 'false')
+    themeStore.set({
+      ...$themeStore,
+      selectedTheme: newTheme,
+      useDefault: false,
+    })
     storeTheme(newTheme)
   }
 </script>
@@ -28,19 +31,19 @@
         <Hamburger />
       </label>
     {:else}
-      <div
+      <button
         class="flex items-center cursor-pointer gap-3"
         on:click={() => goto('/')}
       >
         <BrandLogo />
         <AlphaTag />
-      </div>
+    </button>
     {/if}
   </div>
 
   <!-- Even if the user is not authed, render this header in the connection flow -->
-  {#if !$sessionStore.authed || $page.url.pathname.match(/register|backup|delegate/)}
-    <div
+  {#if !$sessionStore.authed}
+    <a
       class="hidden lg:flex flex-1 items-center cursor-pointer gap-3"
       on:click={() => goto('/')}
     >
@@ -51,33 +54,24 @@
       <div class="hidden sm:inline-block">
         <AlphaTag />
       </div>
-    </div>
+    </a>
   {/if}
 
-  <div class="ml-auto">
-    {#if !$sessionStore.loading && !$sessionStore.authed}
-      <div class="flex-none">
-        <Connect />
-      </div>
-    {/if}
-
+  <div class="ml-auto flex items-center gap-2">
     {#if $sessionStore.authed}
-      <a href="/settings" class="ml-2 cursor-pointer">
+      <a href="/settings">
         <Avatar size="small" />
       </a>
     {/if}
 
-    <span class="ml-2 cursor-pointer">
-      {#if $themeStore === 'light'}
-        <span on:click={() => setTheme('dark')}>
-          <LightMode />
-        </span>
-      {:else}
-        <span on:click={() => setTheme('light')}>
-          <DarkMode />
-        </span>
-      {/if}
-    </span>
+    {#if $themeStore.selectedTheme === 'light'}
+      <button on:click={() => setTheme('dark')}>
+        <LightMode />
+      </button>
+    {:else}
+      <button on:click={() => setTheme('light')}>
+        <DarkMode />
+      </button>
+    {/if}
   </div>
 </header>
-
