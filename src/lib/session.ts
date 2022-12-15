@@ -27,10 +27,9 @@ export const initialise: () => Promise<void> = async () => {
     const program = await walletauth.program({
       namespace: { creator: "Fission", name: "Walletauth Template" },
 
-      onAccountChange: handleProgram,
-      onDisconnect: disconnect,
+      onAccountChange: (p) => handleProgram(p),
+      onDisconnect: () => disconnect(),
     })
-
 
     // Populate session and filesystem stores
     handleProgram(program)
