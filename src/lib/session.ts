@@ -28,7 +28,7 @@ export const initialise: () => Promise<void> = async () => {
       namespace: { creator: "Fission", name: "Walletauth Template" },
 
       onAccountChange: (p) => handleProgram(p),
-      onDisconnect: disconnect,
+      onDisconnect: () => disconnect(),
     })
 
     // Populate session and filesystem stores
