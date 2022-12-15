@@ -29,7 +29,7 @@
     "vite": "^3.1.0-beta.1"
   },
   "dependencies": {
-    "webnative": "^0.34.1",
-    "webnative-walletauth": "fission-codes/webnative-walletauth#a8db611b6b4ab1ce55d20b1e4b86694f504eac9c"
+    "webnative": "^0.35.0",
+    "webnative-walletauth": "^0.1.0"
   }
 }
