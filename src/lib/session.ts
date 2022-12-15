@@ -31,7 +31,6 @@ export const initialise: () => Promise<void> = async () => {
       onDisconnect: disconnect,
     })
 
-    console.log(program)
 
     // Populate session and filesystem stores
     handleProgram(program)
