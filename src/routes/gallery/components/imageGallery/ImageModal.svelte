@@ -99,6 +99,7 @@
     class="modal-toggle"
     bind:checked={isModalOpen}
   />
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <label
     for={`image-modal-${image.cid}`}
     class="modal cursor-pointer z-50"
@@ -144,7 +145,7 @@
           </p>
           <a
             href={`https://ipfs.${ipfsGatewayUrl}/ipfs/${image.cid}/userland`}
-            target="_blank"
+            target="_blank" rel="noreferrer"
             class="underline mb-2 hover:text-neutral-500"
           >
             View on IPFS{#if image.private}*{/if}
@@ -161,7 +162,7 @@
               Interested in private file sharing as a feature? Follow the <a
                 class="underline"
                 href="https://github.com/webnative-examples/webnative-app-template/issues/4"
-                target="_blank"
+                target="_blank" rel="noreferrer"
               >
                 github issue.
               </a>
