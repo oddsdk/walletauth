@@ -43,7 +43,7 @@
 
   <!-- Even if the user is not authed, render this header in the connection flow -->
   {#if !$sessionStore.authed}
-    <a
+    <button
       class="hidden lg:flex flex-1 items-center cursor-pointer gap-3"
       on:click={() => goto('/')}
     >
@@ -54,7 +54,7 @@
       <div class="hidden sm:inline-block">
         <AlphaTag />
       </div>
-    </a>
+    </button>
   {/if}
 
   <div class="ml-auto flex items-center gap-2">
