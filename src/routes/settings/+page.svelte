@@ -1,9 +1,9 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { sessionStore } from '$src/stores'
-  import { copyAddressToClipboard, disconnect } from '$lib/session'
   import AvatarUpload from '$components/settings/AvatarUpload.svelte'
   import ThemePreferences from '$components/settings/ThemePreferences.svelte'
+  import Address from '$components/settings/Address.svelte'
 </script>
 
 {#if $sessionStore.authed}
@@ -13,23 +13,11 @@
     <h1 class="text-xl">Account Settings</h1>
 
     <div class="flex flex-col items-start justify-center gap-6">
-      <div>
-        <AvatarUpload />
-      </div>
+      <AvatarUpload />
 
-      <div>
-        <h3 class="text-lg mb-4">Address</h3>
-        <p class="cursor-pointer transition-colors hover:text-orange-300" on:click={copyAddressToClipboard}>{$sessionStore.address}</p>
-      </div>
+      <Address />
 
-      <div>
-        <ThemePreferences />
-      </div>
-
-      <div>
-        <h3 class="text-lg mb-4">Disconnect Account</h3>
-        <button class="btn btn-primary" on:click={disconnect}>Disconnect</button>
-      </div>
+      <ThemePreferences />
     </div>
   </div>
 {:else}

@@ -9,8 +9,9 @@
   import Home from '$components/icons/Home.svelte'
   import PhotoGallery from '$components/icons/PhotoGallery.svelte'
   import Settings from '$components/icons/Settings.svelte'
+  import NavItem from '$components/nav/NavItem.svelte'
 
-  const navItems = [
+  const navItemsUpper = [
     {
       label: 'Home',
       href: '/',
@@ -22,14 +23,18 @@
       icon: PhotoGallery
     },
     {
-      label: 'About This Template',
-      href: '/about/',
-      icon: About
-    },
-    {
       label: 'Account Settings',
       href: '/settings/',
       icon: Settings
+    }
+  ]
+
+  const navItemsLower = [
+    {
+      label: 'About This Template',
+      href: '/about/',
+      icon: About,
+      placement: 'bottom'
     }
   ]
 
@@ -58,7 +63,7 @@
       />
       <div class="menu p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
         <!-- Brand -->
-        <div
+        <button
           class="flex items-center gap-3 cursor-pointer mb-8"
           on:click={() => {
             handleCloseDrawer()
@@ -68,23 +73,19 @@
           <BrandLogo />
           <BrandWordmark />
           <AlphaTag />
-        </div>
+        </button>
 
-        <!-- Menu -->
+        <!-- Upper Menu -->
         <ul>
-          {#each navItems as item}
-            <li>
-              <a
-                class="flex items-center justify-start gap-2 font-bold text-sm text-base-content hover:text-base-100 bg-base-100 hover:bg-base-content ease-in-out duration-[250ms] {$page
-                  .url.pathname === item.href
-                  ? '!text-base-100 !bg-base-content'
-                  : ''}"
-                href={item.href}
-                on:click={handleCloseDrawer}
-              >
-                <svelte:component this={item.icon} />{item.label}
-              </a>
-            </li>
+          {#each navItemsUpper as item}
+            <NavItem {item} {handleCloseDrawer} />
+          {/each}
+        </ul>
+
+        <!-- Lower Menu -->
+        <ul class="mt-auto pb-8">
+          {#each navItemsLower as item}
+            <NavItem {item} {handleCloseDrawer} />
           {/each}
         </ul>
       </div>

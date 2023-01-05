@@ -1,27 +1,3 @@
 <div
-  class="loader ease-linear rounded-full border-4 border-t-4 border-t-orange-300 border-neutral h-16 w-16"
+  class="loader animate-spin ease-linear rounded-full border-4 border-t-4 border-t-orange-500 border-base-content h-16 w-16"
 />
-
-<style>
-  .loader {
-    animation: spinner 1s linear infinite;
-  }
-
-  @-webkit-keyframes spinner {
-    0% {
-      -webkit-transform: rotate(0deg);
-    }
-    100% {
-      -webkit-transform: rotate(360deg);
-    }
-  }
-
-  @keyframes spinner {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-</style>

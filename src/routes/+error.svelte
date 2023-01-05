@@ -21,21 +21,21 @@
     <a
       class="flex items-center justify-center gap-2 font-bold text-sm text-base-content"
       href="https://guide.fission.codes/"
-      target="_blank"
+      target="_blank" rel="noreferrer"
     >
       Docs <ExternalLink />
     </a>
     <a
       class="flex items-center justify-center gap-2 font-bold text-sm text-base-content"
       href="https://github.com/webnative-examples/"
-      target="_blank"
+      target="_blank" rel="noreferrer"
     >
       Github <Github />
     </a>
     <a
       class="flex items-center justify-center gap-2 font-bold text-sm text-base-content"
       href="https://fission.codes/discord"
-      target="_blank"
+      target="_blank" rel="noreferrer"
     >
       Discord <Discord />
     </a>

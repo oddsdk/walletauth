@@ -56,7 +56,7 @@
 
 <svelte:window on:resize={setDevice} />
 
-<div data-theme={$themeStore} class="min-h-screen">
+<div data-theme={$themeStore.selectedTheme} class="min-h-screen">
   <Notifications />
 
   {#if $sessionStore.loading}

@@ -7,6 +7,7 @@
   const handleOpenModal = () => openModal(image)
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="relative group w-full aspect-[22/23] rounded-lg border-2 border-transparent hover:border-base-content box-border overflow-hidden transition-colors ease-in"
   on:click={handleOpenModal}
