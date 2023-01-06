@@ -10,6 +10,7 @@ const config = {
     adapter: adapter({
       fallback: 'index.html'
     }),
+    trailingSlash: 'always',
   }
 }
 
