@@ -24,9 +24,13 @@
 		"allowJs": true,
 		"checkJs": true,
 		"paths": {
+			"$components": ["src/components"],
 			"$components/*": ["src/components/*"],
+			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
+			"$routes": ["src/routes"],
 			"$routes/*": ["src/routes/*"],
+			"$src": ["src"],
 			"$src/*": ["src/*"],
 		},
 		"typeRoots": ["src/@types", "node_modules/@types"]
