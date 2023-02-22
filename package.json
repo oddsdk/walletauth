@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "webnative": "^0.36.3",
-    "webnative-walletauth": "file:../webnative-walletauth"
+    "webnative-walletauth": "fission-codes/webnative-walletauth#avivash/bump-webnative-to-0.36.3"
   }
 }
