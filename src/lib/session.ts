@@ -1,6 +1,6 @@
 import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
-import * as wn from 'webnative'
+import type * as wn from 'webnative'
 import * as walletauth from 'webnative-walletauth'
 
 import { filesystemStore, sessionStore } from '../stores'
