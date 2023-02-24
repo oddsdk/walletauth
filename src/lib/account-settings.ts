@@ -55,7 +55,7 @@ const archiveOldAvatar = async (): Promise<void> => {
   }
 
   // Find the filename of the old avatar
-  const path = wn.path.directory(...AVATAR_DIR)
+  const path = AVATAR_DIR
   const links = await fs.ls(path)
   const oldAvatarFileName = Object.keys(links).find(key =>
     key.includes(AVATAR_FILE_NAME)
