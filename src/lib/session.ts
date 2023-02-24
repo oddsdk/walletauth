@@ -1,6 +1,6 @@
 import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
-import * as wn from 'webnative'
+import type * as wn from 'webnative'
 import * as walletauth from 'webnative-walletauth'
 
 import { filesystemStore, sessionStore } from '../stores'
@@ -53,7 +53,7 @@ const handleProgram = async (program: wn.Program) => {
 
   if (program.session) {
     // Create directory for Account Settings
-    await program.session.fs.mkdir(wn.path.directory(...ACCOUNT_SETTINGS_DIR))
+    await program.session.fs.mkdir(ACCOUNT_SETTINGS_DIR)
 
     // ✅ Authenticated
     sessionStore.update(state => ({

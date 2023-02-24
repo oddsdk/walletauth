@@ -31,8 +31,8 @@ type Link = {
 }
 
 export const GALLERY_DIRS = {
-  [ AREAS.PUBLIC ]: [ 'public', 'gallery' ],
-  [ AREAS.PRIVATE ]: [ 'private', 'gallery' ]
+  [AREAS.PUBLIC]: wn.path.directory('public', 'gallery'),
+  [AREAS.PRIVATE]: wn.path.directory('private', 'gallery')
 }
 const FILE_SIZE_LIMIT = 20
 
@@ -44,20 +44,20 @@ const FILE_SIZE_LIMIT = 20
 
 export const initializeFilesystem = async (fs: FileSystem): Promise<void> => {
   const publicPathExists = await fs.exists(
-    wn.path.file(...GALLERY_DIRS[ AREAS.PUBLIC ])
-  );
+    GALLERY_DIRS[AREAS.PUBLIC]
+  )
   const privatePathExists = await fs.exists(
-    wn.path.file(...GALLERY_DIRS[ AREAS.PRIVATE ])
-  );
+    GALLERY_DIRS[AREAS.PRIVATE]
+  )
 
   if (!publicPathExists) {
-    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[ AREAS.PUBLIC ]));
+    await fs.mkdir(GALLERY_DIRS[AREAS.PUBLIC])
   }
 
   if (!privatePathExists) {
-    await fs.mkdir(wn.path.directory(...GALLERY_DIRS[ AREAS.PRIVATE ]));
+    await fs.mkdir(GALLERY_DIRS[AREAS.PRIVATE])
   }
-};
+}
 
 /**
  * Get images from the user's WNFS and construct the `src` value for the images
@@ -72,15 +72,15 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
     const fs = getStore(filesystemStore)
 
     // Set path to either private or public gallery dir
-    const path = wn.path.directory(...GALLERY_DIRS[ selectedArea ])
+    const path = GALLERY_DIRS[selectedArea]
 
     // Get list of links for files in the gallery dir
     const links = await fs.ls(path)
 
     let images = await Promise.all(
-      Object.entries(links).map(async ([ name ]) => {
+      Object.entries(links).map(async ([name]) => {
         const file = await fs.get(
-          wn.path.file(...GALLERY_DIRS[ selectedArea ], `${name}`)
+          wn.path.combine(GALLERY_DIRS[selectedArea], wn.path.file(`${name}`))
         )
 
         if (!isFile(file)) return null
@@ -92,7 +92,7 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
           : (file as PublicFile).cid.toString()
 
         // Create a blob to use as the image `src`
-        const blob = new Blob([ file.content ])
+        const blob = new Blob([file.content])
         const src = URL.createObjectURL(blob)
 
         const ctime = isPrivate
@@ -104,7 +104,7 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
           ctime,
           name,
           private: isPrivate,
-          size: (links[ name ] as Link).size,
+          size: (links[name] as Link).size,
           src
         }
       })
@@ -120,11 +120,11 @@ export const getImagesFromWNFS: () => Promise<void> = async () => {
       ...store,
       ...(isPrivate
         ? {
-          privateImages: images
-        }
+            privateImages: images
+          }
         : {
-          publicImages: images
-        }),
+            publicImages: images
+          }),
       loading: false
     }))
   } catch (error) {
@@ -155,7 +155,7 @@ export const uploadImageToWNFS: (
 
     // Reject the upload if the image already exists in the directory
     const imageExists = await fs.exists(
-      wn.path.file(...GALLERY_DIRS[ selectedArea ], image.name)
+      wn.path.combine(GALLERY_DIRS[ selectedArea ], wn.path.file(image.name))
     )
     if (imageExists) {
       throw new Error(`${image.name} image already exists`)
@@ -163,7 +163,7 @@ export const uploadImageToWNFS: (
 
     // Create a sub directory and add some content
     await fs.write(
-      wn.path.file(...GALLERY_DIRS[ selectedArea ], image.name),
+      wn.path.combine(GALLERY_DIRS[ selectedArea ], wn.path.file(image.name)),
       await fileToUint8Array(image)
     )
 
@@ -189,12 +189,14 @@ export const deleteImageFromWNFS: (
     const fs = getStore(filesystemStore)
 
     const imageExists = await fs.exists(
-      wn.path.file(...GALLERY_DIRS[ selectedArea ], name)
+      wn.path.combine(GALLERY_DIRS[selectedArea], wn.path.file(name))
     )
 
     if (imageExists) {
       // Remove images from server
-      await fs.rm(wn.path.file(...GALLERY_DIRS[ selectedArea ], name))
+      await fs.rm(
+        wn.path.combine(GALLERY_DIRS[selectedArea], wn.path.file(name))
+      )
 
       // Announce the changes to the server
       await fs.publish()
