@@ -17,7 +17,7 @@ export type Session = {
 
 /**
  * Ask the user to sign a message so we can use their wallet key to
- * create/attach their webnative file system
+ * create/attach their odd file system
  */
 export const initialise: () => Promise<void> = async () => {
   try {
@@ -63,7 +63,7 @@ const handleProgram = async (program: wn.Program) => {
       loading: false
     }))
     addNotification(
-      'Wallet connected. You can now access your Webnative File System.',
+      'Wallet connected. You can now access your ODD File System.',
       'success'
     )
 
@@ -81,7 +81,7 @@ const handleProgram = async (program: wn.Program) => {
 }
 
 /**
- * Disconnect the user from their webnative session, reset the sessionStore and go to homepage
+ * Disconnect the user from their odd session, reset the sessionStore and go to homepage
  */
 export const disconnect: () => Promise<void> = async () => {
   sessionStore.update(state => ({
