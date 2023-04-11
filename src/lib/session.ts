@@ -1,7 +1,7 @@
 import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
-import type * as wn from 'webnative'
-import * as walletauth from 'webnative-walletauth'
+import type * as odd from '@oddjs/odd'
+import * as walletauth from '@oddjs/odd-walletauth'
 
 import { filesystemStore, sessionStore } from '../stores'
 import { initializeFilesystem } from '../routes/gallery/lib/gallery'
@@ -44,7 +44,7 @@ export const initialise: () => Promise<void> = async () => {
  * Handle updates to the WNFS appState by setting the session and filesystem stores
  * @param appState
  */
-const handleProgram = async (program: wn.Program) => {
+const handleProgram = async (program: odd.Program) => {
   // Update FS store
   filesystemStore.update(() => program.session?.fs)
 
