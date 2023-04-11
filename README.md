@@ -1,32 +1,32 @@
 # WalletAuth App Template
 
-[![Built by FISSION](https://img.shields.io/badge/⌘-Built_by_FISSION-purple.svg)](https://fission.codes) [![Built by FISSION](https://img.shields.io/badge/webnative-v0.34.1-purple.svg)](https://github.com/fission-suite/webnative) [![Discord](https://img.shields.io/discord/478735028319158273.svg)](https://discord.gg/zAQBDEq) [![Discourse](https://img.shields.io/discourse/https/talk.fission.codes/topics)](https://talk.fission.codes)
+[![Built by FISSION](https://img.shields.io/badge/⌘-Built_by_FISSION-purple.svg)](https://fission.codes) [![Built by FISSION](https://img.shields.io/badge/ts-odd-v0.34.1-purple.svg)](https://github.com/oddsdk/ts-odd) [![Discord](https://img.shields.io/discord/478735028319158273.svg)](https://discord.gg/zAQBDEq) [![Discourse](https://img.shields.io/discourse/https/talk.fission.codes/topics)](https://talk.fission.codes)
 
-![Webnative UI Screenshot](static/webnative-ui.png)
+![ODD UI Screenshot](static/odd-ui.png)
 
-The WalletAuth App Template is a clone-and-go template for building a web application using [Webnative WalletAuth](https://github.com/fission-codes/webnative-walletauth/), fast. Clone, customize, and deploy to have a running distributed app in mere minutes.
+The ODD App Template is a clone-and-go template for building a web application using [ODD WalletAuth](https://github.com/oddsdk/odd-walletauth/), fast. Clone, customize, and deploy to have a running distributed app in mere minutes.
 
 <div style="background-color: #FEEB80; padding: 1px 20px; border-radius: 10px;">
-    <p class="text-align: center;"><strong>❗️Webnative is alpha software.</strong></p>
+    <p class="text-align: center;"><strong>❗️The ODD SDK is alpha software.</strong></p>
     <p>We recommend you <u>do not develop production applications using the WalletAuth App Template</u> at this time. We're working on making it reliable, fast, and awesome, but we're not there yet!</p>
 </div>
 
-## 🤔 What's Webnative?
+## 🤔 What's The ODD SDK?
 
-[The Webnative SDK](https://github.com/fission-codes/webnative) empowers developers to build fully distributed web applications without needing a complex back-end. The SDK provides:
+[The ODD SDK](https://github.com/oddsdk/ts-odd) empowers developers to build fully distributed web applications without needing a complex back-end. The SDK provides:
 
 - user accounts (via [the browser's Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)),
 - authorization (using [UCAN](https://ucan.xyz))
-- encrypted file storage (via the [Webnative File System](https://guide.fission.codes/developers/webnative/file-system-wnfs), backed by the [InterPlanetary File System](https://ipfs.io/), or IPFS)
+- encrypted file storage (via the [ODD File System](https://guide.fission.codes/developers/odd/file-system-wnfs), backed by the [InterPlanetary File System](https://ipfs.io/), or IPFS)
 - and key management (via websockets and a two-factor auth-like flow).
 
-Webnative applications work offline and store data encrypted for the user by leveraging the power of the web platform. You can read more about Webnative in Fission's [Webnative Guide](https://guide.fission.codes/developers/webnative).
+ODD applications work offline and store data encrypted for the user by leveraging the power of the web platform. You can read more about the ODD SDK in Fission's [ODD Guide](https://guide.fission.codes/developers/odd).
 
 ## 📦 What does this template give me?
 
 ### 🥰 Silky-smooth end-user flows
 
-The WalletAuth App Template provides a _silky-smooth user experience_ out of the box. Creating an account and linking a second device feels familiar, comfortable, and obvious. Webnative authentication is key-based rather than password-based, so we've focused heavily on the authentication flows, borrowing language and screens from two-factor auth flows.
+The WalletAuth App Template provides a _silky-smooth user experience_ out of the box. Creating an account and linking a second device feels familiar, comfortable, and obvious. The ODD SDK authentication is key-based rather than password-based, so we've focused heavily on the authentication flows, borrowing language and screens from two-factor auth flows.
 
 ### 🧱 Built with a modern web stack
 
@@ -37,11 +37,11 @@ The app template is built with modern web technologies:
 - [Tailwind](https://tailwindcss.com/)
 - [DaisyUI](https://daisyui.com/)
 
-### 👩‍🏫 A simple Webnative demo to learn from
+### 👩‍🏫 A simple ODD demo to learn from
 
 ![WNFS Image Gallery Screenshot](static/wnfs-gallery-screenshot.png)
 
-The app template includes a functioning application: an image gallery. Check out the image gallery code to learn how a Webnative application handles things like file uploads, directories, etc.
+The app template includes a functioning application: an image gallery. Check out the image gallery code to learn how an ODD application handles things like file uploads, directories, etc.
 
 ## 🚀 Getting Started
 
@@ -54,7 +54,7 @@ Prerequiste: ensure you are running Node 16.14 or greater, but _not_ Node 17 (18
 1. Clone the repository:
 
    ```shell
-   git clone git@github.com:webnative-examples/walletauth.git
+   git clone git@github.com:oddsdk/walletauth.git
    ```
 
 2. Install the dependencies.
@@ -110,11 +110,11 @@ The app template is designed to be easy for you to _make it your own._ Here's ho
 
 👏 You're ready to start adding custom functionality! 🚀
 
-Check out the [Webnative Guide](https://guide.fission.codes/developers/webnative) for Webnative questions or [UCAN.xyz](https://ucan.xyz) for UCAN questions.
+Check out the [ODD SDK Guide](https://guide.fission.codes/developers/odd) for ODD SDK questions or [UCAN.xyz](https://ucan.xyz) for UCAN questions.
 
 ## 🧨 Deploy
 
-Any static hosting platform should be supported. The Webnative App Template is currently deployed on:
+Any static hosting platform should be supported. The ODD WalletAuth Template is currently deployed on:
 
 - [Fission](#fission-app-hosting)
 - [Netlify](#netlify)
@@ -123,7 +123,7 @@ Any static hosting platform should be supported. The Webnative App Template is c
 
 Try out [WalletAuth App Template on Fission](https://walletauth.fission.app/)
 
-A Webnative application can be published to IPFS with the [Fission CLI](https://guide.fission.codes/developers/cli) or the [Fission GitHub publish action](https://github.com/fission-suite/publish-action).
+An ODD application can be published to IPFS with the [Fission CLI](https://guide.fission.codes/developers/cli) or the [Fission GitHub publish action](https://github.com/fission-suite/publish-action).
 
 **To publish with the Fission CLI:**
 
@@ -147,9 +147,9 @@ See the [Fission Guide](https://guide.fission.codes/developers/installation) and
 
 ### Netlify
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9008a4d3-cfd2-47bf-8506-79e0ca4f898c/deploy-status)](https://app.netlify.com/sites/webnative-walletauth/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9008a4d3-cfd2-47bf-8506-79e0ca4f898c/deploy-status)](https://app.netlify.com/sites/odd-walletauth/deploys)
 
-In order to deploy your Webnative application on Netlify:
+In order to deploy your ODD application on Netlify:
 
 1. Create a new Netlify site and connect your app's git repository. (If you don't have your application stored in a git repository, you can upload the output of a [static build](#static-build).)
 2. Just click Deploy. Netlify takes care of the rest. No Netlify-specific configuration is needed.

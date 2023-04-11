@@ -1,7 +1,7 @@
 import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
-import type * as wn from 'webnative'
-import * as walletauth from 'webnative-walletauth'
+import type * as odd from '@oddjs/odd'
+import * as walletauth from '@oddjs/odd-walletauth'
 
 import { filesystemStore, sessionStore } from '../stores'
 import { initializeFilesystem } from '../routes/gallery/lib/gallery'
@@ -17,7 +17,7 @@ export type Session = {
 
 /**
  * Ask the user to sign a message so we can use their wallet key to
- * create/attach their webnative file system
+ * create/attach their odd file system
  */
 export const initialise: () => Promise<void> = async () => {
   try {
@@ -44,7 +44,7 @@ export const initialise: () => Promise<void> = async () => {
  * Handle updates to the WNFS appState by setting the session and filesystem stores
  * @param appState
  */
-const handleProgram = async (program: wn.Program) => {
+const handleProgram = async (program: odd.Program) => {
   // Update FS store
   filesystemStore.update(() => program.session?.fs)
 
@@ -63,7 +63,7 @@ const handleProgram = async (program: wn.Program) => {
       loading: false
     }))
     addNotification(
-      'Wallet connected. You can now access your Webnative File System.',
+      'Wallet connected. You can now access your ODD File System.',
       'success'
     )
 
@@ -81,7 +81,7 @@ const handleProgram = async (program: wn.Program) => {
 }
 
 /**
- * Disconnect the user from their webnative session, reset the sessionStore and go to homepage
+ * Disconnect the user from their odd session, reset the sessionStore and go to homepage
  */
 export const disconnect: () => Promise<void> = async () => {
   sessionStore.update(state => ({

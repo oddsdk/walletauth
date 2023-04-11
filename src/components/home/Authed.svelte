@@ -17,7 +17,7 @@
   <div class="flex flex-col items-start justify-center gap-5">
     <h2 class="text-lg">Photo Gallery Demo</h2>
     <p>
-      Webnative makes it easy to implement private, encrypted, user-owned
+      The ODD SDK makes it easy to implement private, encrypted, user-owned
       storage in your app. See it in action with our photo gallery demo.
     </p>
     <a class="btn btn-primary" href="/gallery">Try the Photo Gallery Demo</a>

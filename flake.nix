@@ -1,5 +1,5 @@
 {
-  description = "webnative-examples/walletauth";
+  description = "oddsdk/walletauth";
 
 
   # Inputs
@@ -17,7 +17,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.simpleFlake {
       inherit self nixpkgs;
-      name = "webnative-examples/walletauth";
+      name = "oddsdk/walletauth";
       shell = ./nix/shell.nix;
     };
 }

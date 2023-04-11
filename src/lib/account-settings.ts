@@ -1,9 +1,9 @@
 import { get as getStore } from 'svelte/store'
-import * as wn from 'webnative'
+import * as odd from '@oddjs/odd'
 import * as uint8arrays from 'uint8arrays'
 import type { CID } from 'multiformats/cid'
-import type { PuttableUnixTree, File as WNFile } from 'webnative/fs/types'
-import type { Metadata } from 'webnative/fs/metadata'
+import type { PuttableUnixTree, File as WNFile } from '@oddjs/odd/fs/types'
+import type { Metadata } from '@oddjs/odd/fs/metadata'
 
 import { accountSettingsStore, filesystemStore } from '$src/stores'
 import { addNotification } from '$lib/notifications'
@@ -30,14 +30,14 @@ interface AvatarFile extends PuttableUnixTree, WNFile {
   }
 }
 
-export const ACCOUNT_SETTINGS_DIR = wn.path.directory('private', 'settings')
-const AVATAR_DIR = wn.path.combine(
+export const ACCOUNT_SETTINGS_DIR = odd.path.directory('private', 'settings')
+const AVATAR_DIR = odd.path.combine(
   ACCOUNT_SETTINGS_DIR,
-  wn.path.directory('avatars')
+  odd.path.directory('avatars')
 )
-const AVATAR_ARCHIVE_DIR = wn.path.combine(
+const AVATAR_ARCHIVE_DIR = odd.path.combine(
   AVATAR_DIR,
-  wn.path.directory('archive')
+  odd.path.directory('archive')
 )
 const AVATAR_FILE_NAME = 'avatar'
 const FILE_SIZE_LIMIT = 20
@@ -66,10 +66,10 @@ const archiveOldAvatar = async (): Promise<void> => {
   }`
 
   // Move old avatar to archive dir
-  const fromPath = wn.path.combine(AVATAR_DIR, wn.path.file(oldAvatarFileName))
-  const toPath = wn.path.combine(
+  const fromPath = odd.path.combine(AVATAR_DIR, odd.path.file(oldAvatarFileName))
+  const toPath = odd.path.combine(
     AVATAR_ARCHIVE_DIR,
-    wn.path.file(archiveFileName)
+    odd.path.file(archiveFileName)
   )
   await fs.mv(fromPath, toPath)
 
@@ -114,7 +114,7 @@ export const getAvatarFromWNFS = async (): Promise<void> => {
     }
 
     const file = await fs.get(
-      wn.path.combine(AVATAR_DIR, wn.path.file(`${avatarName}`))
+      odd.path.combine(AVATAR_DIR, odd.path.file(`${avatarName}`))
     )
 
     // The CID for private files is currently located in `file.header.content`
@@ -180,7 +180,7 @@ export const uploadAvatarToWNFS = async (image: File): Promise<void> => {
 
     // Create a sub directory and add the avatar
     await fs.write(
-      wn.path.combine(AVATAR_DIR, wn.path.file(updatedImage.name)),
+      odd.path.combine(AVATAR_DIR, odd.path.file(updatedImage.name)),
       await fileToUint8Array(updatedImage)
     )
 
