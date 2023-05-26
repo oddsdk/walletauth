@@ -2,6 +2,7 @@ import { get as getStore } from 'svelte/store'
 import { goto } from '$app/navigation'
 import type * as odd from '@oddjs/odd'
 import * as walletauth from '@oddjs/odd-walletauth'
+import * as eip5630 from "./eip-5630-snap-implementation"
 
 import { filesystemStore, sessionStore } from '../stores'
 import { initializeFilesystem } from '../routes/gallery/lib/gallery'
@@ -25,7 +26,8 @@ export const initialise: () => Promise<void> = async () => {
 
     // Get the initial WNFS appState
     const program = await walletauth.program({
-      namespace: { creator: "Fission", name: "Walletauth Template" },
+      wallet: eip5630,
+      namespace: { creator: "Fission", name: "Walletauth EIP-5630 Template" },
 
       onAccountChange: (p) => handleProgram(p),
       onDisconnect: () => disconnect(),
