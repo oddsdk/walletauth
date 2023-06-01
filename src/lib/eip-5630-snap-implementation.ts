@@ -1,7 +1,6 @@
 import type { ProviderRpcError } from "eip1193-provider"
 import type { Implementation, InitArgs } from "@oddjs/odd-walletauth/wallet/implementation"
 
-import * as nacl from "tweetnacl"
 import * as snap from "./snap"
 import * as secp from "@noble/secp256k1"
 import * as uint8arrays from "uint8arrays"
@@ -11,8 +10,6 @@ import type Provider from "eip1193-provider"
 
 import { hasProp, isString, isStringArray } from "@oddjs/odd-walletauth/common"
 
-let installedSnap;
-
 // ⛰
 
 
@@ -20,7 +17,7 @@ type Signature = {
   r: Uint8Array
   s: Uint8Array
 
-  recoveryParam: number
+  recovery: number
   v: number
 
   compact: Uint8Array
@@ -55,7 +52,6 @@ export function setProvider(p: Provider): void {
 
 export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array> {
   const account = await address()
-
   return snap.decrypt(uint8arrays.toString(encryptedMessage, "utf8"), account)
     .then(getResult)
     .then(resp => {
@@ -70,15 +66,12 @@ export async function decrypt(encryptedMessage: Uint8Array): Promise<Uint8Array>
       else throw new Error("Expected to decrypt a string")
     })
     .then(resp => uint8arrays.fromString(resp, "base64pad"))
+    // .catch(err => console.error(err))
 }
 
 
 export async function encrypt(storage: Storage.Implementation, data: Uint8Array): Promise<Uint8Array> {
   const encryptionPublicKey = await publicEncryptionKey(storage)
-
-  // Generate ephemeral keypair
-  const ephemeralKeyPair = nacl.box.keyPair()
-  const nonce = nacl.randomBytes(nacl.box.nonceLength)
 
   // Data padding
   // const dataUtf8 = uint8arrays.toString(data, "base64pad")
@@ -89,21 +82,24 @@ export async function encrypt(storage: Storage.Implementation, data: Uint8Array)
   // const dataWithPadding = uint8arrays.fromString(JSON.stringify({ data: dataUtf8, padding }), "utf8")
 
   // Encrypt
-  const encryptedMessage = nacl.box(
-    uint8arrays.fromString(uint8arrays.toString(data, "base64pad"), "utf8"),
-    nonce,
-    encryptionPublicKey,
-    ephemeralKeyPair.secretKey,
-  )
+  let stringifiedData = uint8arrays.toString(data, "base64pad");
+
+  const encryptedMessage = await secp.signAsync(
+    uint8arrays.toString(encryptionPublicKey, "hex"),
+    uint8arrays.toString(data, "hex"),
+  );
 
   // The RPC method `eth_decrypt` needs an object with these exact props,
   // hence the `JSON.stringify`.
   return uint8arrays.fromString(
     JSON.stringify({
-      version: "x25519-xsalsa20-poly1305",
-      nonce: uint8arrays.toString(nonce, "base64pad"),
-      ephemPublicKey: uint8arrays.toString(ephemeralKeyPair.publicKey, "base64pad"),
-      ciphertext: uint8arrays.toString(encryptedMessage, "base64pad"),
+      // version: "x25519-xsalsa20-poly1305",
+      // nonce: uint8arrays.toString(nonce, "base64pad"),
+      // ephemPublicKey: uint8arrays.toString(ephemeralKeyPair.publicKey, "base64pad"),
+      // ciphertext: uint8arrays.toString(encryptedMessage, "base64pad"),
+
+      version: "secp256k1-sha512kdf-aes256cbc-hmacsha256",
+      ciphertext: encryptedMessage.toCompactHex()
     }),
     "utf8"
   )
@@ -115,7 +111,6 @@ export async function init(
   { onAccountChange, onDisconnect }: InitArgs
 ): Promise<void> {
   if (didBindEvents) return
-    console.log("init");
   const ethereum = await load()
   const disconnect = async () => {
     globCurrentAccount = null
@@ -126,10 +121,7 @@ export async function init(
     await onDisconnect()
   }
 
-  if (!installedSnap) {
-    await snap.connectSnap()
-    installedSnap = await snap.getSnap()
-  }
+  await snap.connectSnap()
 
   // accountsChanged is called when the account connected to the app changes - this includes when
   // an additional account is connected, as well as when the connected account is disconnected,
@@ -166,33 +158,61 @@ export async function init(
 
 
 export async function publicSignatureKey(storage: Storage.Implementation): Promise<Uint8Array> {
-    console.log("publicSignatureKey");
-  const cache = await fromCache(storage, CACHE_KEYS.PUBLIC_SIGNATURE_KEY)
-  if (cache) return uint8arrays.fromString(cache, "base64pad")
+  // const cache = await fromCache(storage, CACHE_KEYS.PUBLIC_SIGNATURE_KEY);
+  // if (cache) return uint8arrays.fromString(cache);
 
-  const signature = await sign(MSG_TO_SIGN)
-  const signatureParts = deconstructSignature(signature)
+  const signature = await sign(MSG_TO_SIGN);
+  const signatureParts = deconstructSignature(signature);
 
-  const pubKey = secp.recoverPublicKey(
-    hashMessage(MSG_TO_SIGN),
-    signatureParts.full,
-    signatureParts.recoveryParam
+  const msgHash = hashMessage(MSG_TO_SIGN);
+  const fullSig = new secp.Signature(
+    uint8ArrayToBigInt(signatureParts.r.buffer), 
+    uint8ArrayToBigInt(signatureParts.s.buffer), 
+    signatureParts.recovery
+  );
+  
+  const pubKey = fullSig.recoverPublicKey(
+    msgHash
   )
 
   await toCache(
     storage,
     CACHE_KEYS.PUBLIC_SIGNATURE_KEY,
-    uint8arrays.toString(pubKey, "base64pad")
+    uint8arrays.toString(pubKey.toRawBytes(), "base64pad")
+    // pubKey.toHex(false)
+    // base64AddPadding(pubKey.toHex(false))
   )
 
-  return pubKey
+  // return pubKey.toRawBytes()
+  return pubKey.toRawBytes()
+}
+
+function base64AddPadding(str) {
+  return str + Array((4 - str.length % 4) % 4 + 1).join('=');
+}
+
+function uint8ArrayToBigInt(buf) {
+  let bits = 8n
+  if (ArrayBuffer.isView(buf)) {
+    bits = BigInt(buf.BYTES_PER_ELEMENT * 8)
+  } else {
+    buf = new Uint8Array(buf)
+  }
+
+  let ret = 0n
+  for (const i of buf.values()) {
+    const bi = BigInt(i)
+    ret = (ret << bits) + bi
+  }
+  return ret
 }
 
 
 export async function sign(data: Uint8Array): Promise<Uint8Array> {
-    console.log("sign")
-  const provider = await load()
 
+  const provider = await load()
+  const stringifiedData = uint8arrays.toString(data, "base64pad")
+  
   return provider.request({
     method: "personal_sign", params: [
       uint8ArrayToEthereumHex(data),
@@ -231,7 +251,6 @@ export async function verifySignedMessage(
 
 
 export async function address(): Promise<string> {
-    console.log("address")
   if (globCurrentAccount) return globCurrentAccount
 
   const ethereum = await load()
@@ -262,8 +281,8 @@ export function load(): Promise<Provider> {
 
 
 export async function publicEncryptionKey(storage: Storage.Implementation): Promise<Uint8Array> {
-  const cache = await fromCache(storage, CACHE_KEYS.PUBLIC_ENCRYPTION_KEY)
-  if (cache) return uint8arrays.fromString(cache, "base64pad")
+  // const cache = await fromCache(storage, CACHE_KEYS.PUBLIC_ENCRYPTION_KEY)
+  // if (cache) return uint8arrays.fromString(cache, "base64pad")
 
   const ethereum = await load()
   const account = await address()
@@ -348,16 +367,16 @@ export function splitSignature(signature: Uint8Array) {
     }
   }
 
-  // Compute recoveryParam from v
-  const recoveryParam = 1 - (v % 2)
+  // Compute recovery from v
+  const recovery = 1 - (v % 2)
 
-  // Compute _vs from recoveryParam and s
-  if (recoveryParam) { signature[ 32 ] |= 0x80 }
+  // Compute _vs from recovery and s
+  if (recovery) { signature[ 32 ] |= 0x80 }
   const yParityAndS = signature.slice(32, 64)
   const compact = uint8arrays.concat([ r, yParityAndS ])
 
   // Fin
-  return { r, s, v, recoveryParam, compact }
+  return { r, s, v, recovery, compact }
 }
 
 

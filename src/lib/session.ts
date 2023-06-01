@@ -26,7 +26,7 @@ export const initialise: () => Promise<void> = async () => {
 
     // Get the initial WNFS appState
     const program = await walletauth.program({
-      wallet: eip5630,
+      wallet: eip5630.implementation,
       namespace: { creator: "Fission", name: "Walletauth EIP-5630 Template" },
 
       onAccountChange: (p) => handleProgram(p),
